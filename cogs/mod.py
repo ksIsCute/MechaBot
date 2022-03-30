@@ -11,22 +11,14 @@ def setup(client) -> Cog:
 
   mod = Cog("Moderation", "Got moderation?")
   
-  @mod.command(description="BEGONE MESSAGES!", aliases=["messagedelete", "messagepurge", "p"])
-  async def purge(ctx, amount: int):
+  @mod.command(description="BEGONE MESSAGES!")
+  async def purge(ctx, amount: int) -> None:
+    if not ctx.author.channel_permissions.manage_messages:
+      return await ctx.send("You don't have permission to purge! Ask an administrator to give you the `manage_messages` permission.")
     starttime = time.time()
-    if int(amount) > 1000:
-      return await ctx.send("You can only purge `1000` messages at a time!")
-    elif ctx.author.channel_permissions.manage_messages:
-      for i in range(1, int(amount)):
-        await ctx.channel.purge(int(amount))
-      embed = voltage.SendableEmbed(
-        title = "Done!",
-        description = f"# Purged!\nPurged `{amount}` messages in {round(time.time() - starttime, 2)}s",
-        colour = "#00FF00"
-      )
-      await ctx.send(content=ctx.author.mention, embed=embed)
-    else:
-      return await ctx.send("You need the required permission `manage_messages` to execute this command!")
+    await ctx.channel.purge(amount)
+    embed = voltage.SendableEmbed(description=f"# Purged!\nPurged {amount} messages in {round(time.time() - starttime, 2)}s!", color="#00FF00")
+    await ctx.send(content=ctx.author.mention, embed=embed)
       
   @mod.command(description="Set a custom prefix for this server!")
   async def sp(ctx, prefix):
@@ -38,6 +30,7 @@ def setup(client) -> Cog:
         json.dump(prefixes, f, indent=2)
         embed=voltage.SendableEmbed(title="New Prefix!", description=f"Set this servers prefix to `{prefix}`!", colour="#516BF2")
       return await ctx.send(content=ctx.author.mention, embed=embed)
+      
   @mod.command(description="Ban a user from your server!")
   async def ban(ctx, member: voltage.Member):
     if ctx.author.permissions.ban_members is False:

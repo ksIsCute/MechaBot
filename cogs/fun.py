@@ -5,7 +5,7 @@ def setup(client) -> Cog:
 
   fun = Cog("Fun", "Have some fun and play around with Mechas Commands!")
 
-  @fun.command(description="How long is your pp?", aliases=["pp", "ppsize", "getpp", "whatsmypp", "penismeter"])
+  @fun.command(description="How long is your pp?", aliases=["pp", "ppsize", "getpp", "whatsmypp", "penismeter", "ppmeter"])
   async def ppmeter(ctx):
     ppmeter = [
       "=====",
@@ -23,7 +23,7 @@ def setup(client) -> Cog:
     embed = voltage.SendableEmbed(title = "Your PP:", description = f"8{random.choice(ppmeter)}D", colour="#516BF2")
     await ctx.send(content=ctx.author.mention, embed=embed)
   
-  @fun.command(description="Get some cute doggo pics!", aliases=["dogpic", "doggos", "dogs", "dogpics", "dogpictures", "getdog", "getdogs"])
+  @fun.command(description="Get some cute doggo pics!", aliases=["dogpic", "doggos", "dogs", "dogpics", "dogpictures", "getdog", "getdogs", "dog"])
   async def dog(ctx):
     async with aiohttp.ClientSession() as session:
       request = await session.get('https://some-random-api.ml/img/dog')
@@ -34,7 +34,7 @@ def setup(client) -> Cog:
       embed = voltage.SendableEmbed(title="Doggo!", media=dogjson['link'], colour="#516BF2", description=factjson['fact'])
       await ctx.send(content=ctx.author.mention, embed=embed)
   
-  @fun.command(description="Get some cute cat pics for your collection!", aliases=["kitties", "kitty", "cats", "catpic", "kittypic", "catpicture"])
+  @fun.command(description="Get some cute cat pics for your collection!", aliases=["kitties", "kitty", "cats", "catpic", "kittypic", "catpicture", "cat"])
   async def cat(ctx):
     async with aiohttp.ClientSession() as session:
       request = await session.get('https://some-random-api.ml/img/cat')
@@ -45,7 +45,7 @@ def setup(client) -> Cog:
       embed = voltage.SendableEmbed(title="Meeeooowww!", media=catjson['link'], colour="#516BF2", description=factjson['fact'])
       await ctx.send(content=ctx.author.mention, embed=embed)
   
-  @fun.command(description="Get some rockin' bird pics :sunglasses:", aliases=["birb", "berd", "birbpic", "birdpic", "berdpic"])
+  @fun.command(description="Get some rockin' bird pics :sunglasses:", aliases=["birb", "berd", "birbpic", "birdpic", "berdpic", "bird"])
   async def bird(ctx):
     async with aiohttp.ClientSession() as session:
       request = await session.get('https://some-random-api.ml/img/birb')
