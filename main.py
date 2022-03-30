@@ -127,7 +127,7 @@ async def on_message_error(error: Exception, message):
     ]
     embed=voltage.SendableEmbed(
       title = random.choice(errormsg),
-      description = error,
+      description = Exception,
       colour = "#516BF2",
       media = "https://i.imgur.com/T3YNsY1.png"
     )
