@@ -4,8 +4,7 @@ import voltage, asyncio
 import time, json
 import datetime
 from datetime import timedelta
-from utils import Cog
-from mcstatus import MinecraftServer
+from utils import Cog, CommandContext
 
 
 def setup(client) -> Cog:
@@ -13,18 +12,22 @@ def setup(client) -> Cog:
   mod = Cog("Moderation", "Got moderation?")
   
   @mod.command(description="BEGONE MESSAGES!", aliases=["messagedelete", "messagepurge", "p"])
-  async def purge(ctx, amount:int):
+  async def purge(ctx, amount: int):
     starttime = time.time()
-    if amount > 1000:
+    if int(amount) > 1000:
       return await ctx.send("You can only purge `1000` messages at a time!")
-    elif ctx.author.permissions.manage_messages:
-      await ctx.channel.purge(amount)
+    elif ctx.author.channel_permissions.manage_messages:
+      for i in range(1, int(amount)):
+        await ctx.channel.purge(int(amount))
       embed = voltage.SendableEmbed(
         title = "Done!",
-        description = f"# Purged!\nPurged `1000` messages in {starttime - time.time()}s",
+        description = f"# Purged!\nPurged `{amount}` messages in {round(time.time() - starttime, 2)}s",
         colour = "#00FF00"
       )
-      await ctx.send(embed=embed)
+      await ctx.send(content=ctx.author.mention, embed=embed)
+    else:
+      return await ctx.send("You need the required permission `manage_messages` to execute this command!")
+      
   @mod.command(description="Set a custom prefix for this server!")
   async def sp(ctx, prefix):
     if ctx.author.permissions.manage_server:
