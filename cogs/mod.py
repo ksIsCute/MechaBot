@@ -21,7 +21,7 @@ def setup(client) -> Cog:
       await ctx.channel.purge(amount)
       embed = voltage.SendableEmbed(
         title = "Done!",
-        description = "# Purged!\nPurged `1000` messages in {starttime - time.time()}",
+        description = f"# Purged!\nPurged `1000` messages in {starttime - time.time()}s",
         colour = "#00FF00"
       )
       await ctx.send(embed=embed)
