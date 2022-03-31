@@ -1,7 +1,8 @@
 import voltage, json, time
 from time import time
 import os, random
-from utils import CommandsClient, CommandNotFound, NotEnoughArgs, alive
+from utils import CommandsClient, CommandNotFound, NotEnoughArgs
+from host import alive
 
 async def get_prefix(message, client):
   with open ("prefixes.json", "r") as f:
