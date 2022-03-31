@@ -1,6 +1,13 @@
 # Mecha's Revolt Bot!
 
-## Supported Cogs:
+
+<sup id="cogs">[Current Cogs](#cog)</sup>
+<br>
+<sup id="ver">[Version Support](#vers)</sup>
+<br>
+<sup id="ins">[Setup and Install](#inst)</sup>
+
+## <b id="cog">Supported Cogs</b> [↩](#cogs)
 
 - Moderation
 - Utility
@@ -8,7 +15,7 @@
 - Owner Only
 - Fun
 
-# Supported Python Versions:
+# <b id="vers">Supported Python Versions: </b>[↩](#ver)
 | Status | Version |
 | ----------- | ----------- |
 |❌| 2.7 |
@@ -17,7 +24,7 @@
 | ✅ | Latest |
 If your version isnt supported, you can upgrade/downgrade [here](https://python.org/download)
 
-## How to setup the bot:
+## <b id="inst">Setup and Install</b>[↩](#ins)
 
 1. Install the beta version of voltage
 2. Install other imports like flask, asyncio, datetime, etc.
