@@ -61,5 +61,17 @@ def setup(client) -> Cog:
     else:
       embed = voltage.SendableEmbed(title = "Whoops!", description = "You aren't an owner of this bot!", colour="#FFFF00")
       return await ctx.send(content=ctx.author.mention,embed=embed)
-        
+  
+  @owner.command()
+  async def status(ctx status, presence=None):
+    if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD"
+      if not presence:
+        bot.set_status(status, voltage.PresenceType.online)
+        return await ctx.send(f"Changed status to `{status}`")
+      else:
+        bot.set_status(status, voltage.PresenceType.dnd)
+        return await ctx.send(f"Changed status to `{status}` and a presence of {presence}")
+    else:
+      return await ctx.send("You aren't an owner of this bot!")
+  
   return owner
