@@ -11,6 +11,7 @@ aiohttp = "^3.8.1"
 utils = "^1.0.1"
 psutil = "^5.9.0"
 mcstatus = "^9.0.3"
+Flask = "^2.1.1"
 
 [tool.poetry.dev-dependencies]
 
