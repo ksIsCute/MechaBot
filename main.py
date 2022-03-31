@@ -1,7 +1,7 @@
 import voltage, json, time
 from time import time
 import os, random
-from utils import CommandsClient, CommandNotFound, NotEnoughArgs
+from utils import CommandsClient, CommandNotFound, NotEnoughArgs, alive
 
 async def get_prefix(message, client):
   with open ("prefixes.json", "r") as f:
@@ -133,4 +133,5 @@ async def on_message_error(error: Exception, message):
     )
     return await message.reply(message.author.mention, embed=embed)
 
+alive()
 bot.run(os.environ['TOKEN'])
