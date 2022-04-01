@@ -1,5 +1,5 @@
 import voltage, asyncio
-import time
+import time, aiohttp
 import datetime, psutil, random
 from datetime import timedelta
 from utils import Cog
@@ -10,6 +10,16 @@ starttime = time.time()
 def setup(client) -> Cog:
 
   util = Cog("Utility", "Check out some epic utility commands!")
+
+  @util.command(description="Get the color of a hex code as an image!")
+  async def gc(ctx, hex):
+      embed = voltage.SendableEmbed(
+        title = "Got it!",
+        description = f"This is the color for your hex code: `{hex}`",
+        color = "#516BF2"
+      )
+      await ctx.send(content=f"[](https://some-random-api.ml/canvas/colorviewer?hex={hex})", embed=embed)
+      
   
   @util.command(description="⏲️ | Get the amount of time Mecha has been online for!")
   async def uptime(ctx):
@@ -66,8 +76,6 @@ def setup(client) -> Cog:
   @util.command(description="Get some information on a user!")
   async def userinfo(ctx, user: voltage.User):
     if user.bot is False:
-      if user.badges == "<UserFlags flags=0x0>":
-        badges = "User doesnt have any badges :boohoo:"
       embed = voltage.SendableEmbed(
         title = user.display_name,
         media = user.profile.background,
@@ -87,7 +95,7 @@ def setup(client) -> Cog:
 {user.status.text}
 
 ## {user.name.capitalize()}'s Badges:
-{badges}
+{user.badges}
         
 ## {user.name.capitalize()}'s Banner:
 {user.profile.background}

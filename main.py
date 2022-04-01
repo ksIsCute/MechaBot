@@ -1,5 +1,4 @@
-import voltage, json, time
-from time import time
+import voltage, json, time, asyncio
 import os, random
 from utils import CommandsClient, CommandNotFound, NotEnoughArgs
 from host import alive
@@ -17,7 +16,23 @@ async def get_prefix(message, client):
     return prefixes.get(str(message.server.id), "m!")
 
 bot = CommandsClient(get_prefix)
-"""
+
+async def status():
+  for i in range(1, 10000):
+    statuses = [
+      f"Playing with {len(bot.cache.servers)} servers and {len(bot.members)} users!",
+      f"Watching {len(bot.members)} users!",
+      f"My waifu is better than yours!!! | {len(bot.cache.servers)} servers",
+      f"Jan | {len(bot.cache.servers)} servers",
+      f"guys my father just came back with the milk O_O - delta2571 | {len(bot.cache.servers)} servers",
+      f"Revolt > shitcord | {len(bot.cache.servers)} servers",
+      f"Jans Onlyfans: onlyfans.com/linustechtips | {len(bot.cache.servers)} servers"
+    ]
+    status = random.choice(statuses)
+    await bot.set_status(status, voltage.PresenceType.online)
+    print(f"Set status to {status}")
+    await asyncio.sleep(5)
+
 @bot.listen('message')
 async def on_message(message):
   if message.content == "<@01FZB4GBHDVYY6KT8JH4RBX4KR>":
@@ -26,7 +41,7 @@ async def on_message(message):
       prefix = prefixes.get(str(message.server.id))
     await message.channel.send(f"Pong, {message.author.mention}! My prefix for this server is `{prefix}`")
   await bot.handle_commands(message)
-"""
+
 
 @bot.command()
 async def reload(ctx):
@@ -50,16 +65,16 @@ async def server_added(server):
     prefixes = json.load(f)
   with open("prefixes.json", "w") as f:
     prefixes[str(server.id)] = "m!"
-    await json.dump(prefixes, f, indent=2)
+    json.dump(prefixes, f, indent=2)
   channel = bot.cache.get_channel("01FZBBJJM9R6VYE0M5WJDGKMPT")
-  embed = voltage.SendableEmbed(title="New Server alert!", description=f"# Just Joined {server.name}!\nNow at **{len(bot.servers)}** servers!")
+  embed = voltage.SendableEmbed(title="New Server alert!", description=f"## Just Joined a new server!\nNow at **{len(bot.servers)}** servers!", color="#00FF00")
   await channel.send(content="[]()", embed=embed)
 
 @bot.listen("member_join")
 async def member_join(member):
   if str(member.server.id) == "01FZB38TYPX73VSWFMMJTZE8C5":
-    for role in server.roles:
-      if role.name is "Member"
+    for role in member.server.roles:
+      if role.name.lower() == "member":
         return await member.add_roles(role)
       else:
         pass
@@ -75,13 +90,14 @@ async def on_ready():
         print(f"Just loaded {filename}")
       except Exception as e:
         print(e)
+  await status()
 
-@bot.command()
+@bot.command(description="Get some support!")
 async def support(ctx):
   embed=voltage.SendableEmbed(title="Need Help? Found a Bug? Want to see a feature implimented? All of the above?", description="Tell us at [Our Website](https://mechabot.tk/) or join us in [Our Server](https://app.revolt.chat/invite/hqSq0yZh)!", colour="#516BF2", media="https://i.imgur.com/3DQ7a6I.jpg")
   await ctx.send(content=ctx.author.mention, embed=embed)
 
-@bot.command()
+@bot.command(description="Get a users avatar!")
 async def avatar(ctx, member:voltage.Member):
   embed = voltage.SendableEmbed(
     title = f"{member.display_name}'s avatar!",
@@ -155,6 +171,8 @@ async def on_message_error(error: Exception, message):
       media = "https://i.imgur.com/T3YNsY1.png"
     )
     return await message.reply(message.author.mention, embed=embed)
+
+
 
 alive()
 bot.run(os.environ['TOKEN'])

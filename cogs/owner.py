@@ -26,7 +26,7 @@ def setup(client) -> Cog:
               break
       code = "\n".join(f"    {i}" for i in code.splitlines())
       code = f"async def eval_expr():\n{code}" 
-      def send(text):
+      async def send(text):
         await ctx.send(text)
       env = {
           "bot": client,
