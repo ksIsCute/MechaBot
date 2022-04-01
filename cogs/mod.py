@@ -10,7 +10,19 @@ from utils import Cog, CommandContext
 def setup(client) -> Cog:
 
   mod = Cog("Moderation", "Got moderation?")
-  
+
+  @mod.command(description="Add or remove a role from a user!")
+  async def role(ctx, member: voltage.Member, role: voltage.Role):
+    if ctx.author.channel_permissions.manage_roles:
+      if role in member.roles:
+        await member.remove_roles(role)
+        return await ctx.send(f"Removed role `{role.name}` to `{member}`")
+      elif role not in member.roles:
+        await member.add_roles(role)
+        return await ctx.send(f"Added role `{role.name}` to `{member}`")
+    else:
+      return await ctx.send("You don't have permission to purge! Ask an administrator to give you the `manage_roles` permission.")
+    
   @mod.command(description="BEGONE MESSAGES!")
   async def purge(ctx, amount: int) -> None:
     if not ctx.author.channel_permissions.manage_messages:

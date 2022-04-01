@@ -17,7 +17,6 @@ async def get_prefix(message, client):
     return prefixes.get(str(message.server.id), "m!")
 
 bot = CommandsClient(get_prefix)
-
 """
 @bot.listen('message')
 async def on_message(message):
@@ -25,7 +24,8 @@ async def on_message(message):
     with open("prefixes.json", "r") as f:
       prefixes = json.load(f)
       prefix = prefixes.get(str(message.server.id))
-    return await message.channel.send(f"Pong, {message.author.mention}! My prefix for this server is `{prefix}`")
+    await message.channel.send(f"Pong, {message.author.mention}! My prefix for this server is `{prefix}`")
+  await bot.handle_commands(message)
 """
 
 @bot.command()
@@ -43,6 +43,28 @@ async def reload(ctx):
   else:
     await ctx.send("Get outta hea' you ain't my ownah'!")
     
+
+@bot.listen('server_added')
+async def server_added(server):
+  with open("prefixes.json", "r") as f:
+    prefixes = json.load(f)
+  with open("prefixes.json", "w") as f:
+    prefixes[str(server.id)] = "m!"
+    await json.dump(prefixes, f, indent=2)
+  channel = bot.cache.get_channel("01FZBBJJM9R6VYE0M5WJDGKMPT")
+  embed = voltage.SendableEmbed(title="New Server alert!", description=f"# Just Joined {server.name}!\nNow at **{len(bot.servers)}** servers!")
+  await channel.send(content="[]()", embed=embed)
+
+@bot.listen("member_join")
+async def member_join(member):
+  if str(member.server.id) == "01FZB38TYPX73VSWFMMJTZE8C5":
+    for role in server.roles:
+      if role.name is "Member"
+        return await member.add_roles(role)
+      else:
+        pass
+  else:
+    return
 
 @bot.listen('ready')
 async def on_ready():

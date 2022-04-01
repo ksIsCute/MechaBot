@@ -62,5 +62,43 @@ def setup(client) -> Cog:
     status = server.status()
     embed = voltage.SendableEmbed(title=f"{servername}'s Information", description=f"**Players online:**\n`{status.players.online}` Currently Online\n**Server Latency:**\n`{status.latency}ms`", colour="#516BF2")
     await ctx.send(content=ctx.author.mention, embed=embed)
-    
+
+  @util.command(description="Get some information on a user!")
+  async def userinfo(ctx, user: voltage.User):
+    if user.bot is False:
+      if user.badges == "<UserFlags flags=0x0>":
+        badges = "User doesnt have any badges :boohoo:"
+      embed = voltage.SendableEmbed(
+        title = user.display_name,
+        media = user.profile.background,
+        icon_url = user.display_avatar.url,
+        description = f"""
+# {user.name}'s Basic Information:
+---
+## {user.name.capitalize()}'s User Id: 
+### `{user.id}`
+
+## {user.name.capitalize()}'s Avatar:
+### [Click Here!]({user.avatar.url})
+---
+# {user.name.capitalize()}'s Revolt Profile:
+---
+### {user.name.capitalize()}'s Status:
+{user.status.text}
+
+## {user.name.capitalize()}'s Badges:
+{badges}
+        
+## {user.name.capitalize()}'s Banner:
+{user.profile.background}
+
+## {user.name.capitalize()}'s Bio:
+{user.profile.content}
+      """,
+      color = "#516BF2"
+      )
+      return await ctx.send(content=ctx.author.mention, embed=embed)
+    else:
+      return await ctx.send("Bot profiles coming soon")
+  
   return util

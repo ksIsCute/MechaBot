@@ -5,6 +5,21 @@ def setup(client) -> Cog:
 
   fun = Cog("Fun", "Have some fun and play around with Mechas Commands!")
 
+  @fun.command(name = "8ball", description="Seek your fortune!")
+  async def _8ball(ctx, *, question):
+    responses = [
+      
+      "I belive not",
+      "I dont think so",
+      "No",
+      "Maybe",
+      "Ask again later",
+      "Yes",
+      "Affirmative",
+      "I Belive So",
+      "Its possible",
+    ]
+  
   @fun.command(description="How long is your pp?", aliases=["pp", "ppsize", "getpp", "whatsmypp", "penismeter", "ppmeter"])
   async def ppmeter(ctx):
     ppmeter = [
