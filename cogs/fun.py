@@ -10,25 +10,12 @@ def setup(client) -> Cog:
     if member.id == ctx.author.id:
       async with aiohttp.ClientSession() as session:
         img = await session.get(f"https://some-random-api.ml/animu/pat")
-        json = await img.json()
-        image = json['link']
-        embed = voltage.SendableEmbed(
-          title = f"{ctx.author.display_name} pats.. themself? Sounds lonely..",
-          icon_url = ctx.author.display_avatar,
-          media = image['link'],
-          color="#516BF2"
-        )
-        return await ctx.send(content="[]()", embed=embed)
+        imgjson = await img.json()
+        return await ctx.send(f"{ctx.author.name} pats.. themself? Sounds lonely..\n[]({imgjson['link']})")
     async with aiohttp.ClientSession() as session:
       img = await session.get(f"https://some-random-api.ml/animu/pat")
-      json = await img.json()
-      embed = voltage.SendableEmbed(
-        title = f"{ctx.author.display_name} gave pats to {member.display_name}! How cute!",
-        icon_url = ctx.author.display_avatar,
-        media = json['link'],
-        color="#516BF2"
-      )
-      await ctx.send(content="[]()", embed=embed)
+      imgjson = await img.json()
+      await ctx.send(f"{ctx.author.name} pats {member.name}\n[]({imgjson['link']})")
   
   # https://some-random-api.ml/animu/pat
   @fun.command(description="Give someone a hug!", aliases=["givehug", "hugmember", "huguser", "userhug", "hug"])
@@ -36,25 +23,12 @@ def setup(client) -> Cog:
     if member.id == ctx.author.id:
       async with aiohttp.ClientSession() as session:
         img = await session.get(f"https://some-random-api.ml/animu/hug")
-        json = await img.json()
-        embed = voltage.SendableEmbed(
-          title = f"{ctx.author.display_name} hugged.. themself? Sounds lonely..",
-          icon_url = ctx.author.display_avatar,
-          media = json['link'],
-          color="#516BF2"
-        )
-        return await ctx.send(content="[]()", embed=embed)
+        imgjson = await img.json()
+        return await ctx.send(f"{ctx.author.name} pats.. themself? How lonely **are** you?\n[]({imgjson['link']})")
     async with aiohttp.ClientSession() as session:
       img = await session.get(f"https://some-random-api.ml/animu/hug")
-      json = await img.json()
-      image = json['link']
-      embed = voltage.SendableEmbed(
-        title = f"{ctx.author.display_name} hugged {member.display_name}! How cute!",
-        icon_url = ctx.author.display_avatar,
-        media = image['link'],
-        color="#516BF2"
-      )
-      await ctx.send(content="[]()", embed=embed)
+      imgjson = await img.json()
+      await ctx.send(f"{ctx.author.name} hugged {member.name}\n[]({imgjson['link']})")
   
   @fun.command(description="Get some memes boi (contains 2016 memes)! (May cause loss of brain cells)")
   async def meme(ctx):
