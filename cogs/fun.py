@@ -22,11 +22,10 @@ def setup(client) -> Cog:
     async with aiohttp.ClientSession() as session:
       img = await session.get(f"https://some-random-api.ml/animu/pat")
       json = await img.json()
-      image = json['link']
       embed = voltage.SendableEmbed(
         title = f"{ctx.author.display_name} gave pats to {member.display_name}! How cute!",
         icon_url = ctx.author.display_avatar,
-        media = image['link'],
+        media = json['link'],
         color="#516BF2"
       )
       await ctx.send(content="[]()", embed=embed)
@@ -36,16 +35,15 @@ def setup(client) -> Cog:
   async def hug(ctx, member:voltage.Member):
     if member.id == ctx.author.id:
       async with aiohttp.ClientSession() as session:
-      img = await session.get(f"https://some-random-api.ml/animu/hug")
-      json = await img.json()
-      image = json['link']
-      embed = voltage.SendableEmbed(
-        title = f"{ctx.author.display_name} hugged.. themself? Sounds lonely..",
-        icon_url = ctx.author.display_avatar,
-        media = image['link'],
-        color="#516BF2"
-      )
-      return await ctx.send(content="[]()", embed=embed)
+        img = await session.get(f"https://some-random-api.ml/animu/hug")
+        json = await img.json()
+        embed = voltage.SendableEmbed(
+          title = f"{ctx.author.display_name} hugged.. themself? Sounds lonely..",
+          icon_url = ctx.author.display_avatar,
+          media = json['link'],
+          color="#516BF2"
+        )
+        return await ctx.send(content="[]()", embed=embed)
     async with aiohttp.ClientSession() as session:
       img = await session.get(f"https://some-random-api.ml/animu/hug")
       json = await img.json()
