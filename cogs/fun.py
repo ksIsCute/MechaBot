@@ -18,7 +18,8 @@ def setup(client) -> Cog:
       "---------",
       "===",
       "=============================",
-      "-"
+      "-",
+      "`Error: pp too small`"
     ]
     embed = voltage.SendableEmbed(title = "Your PP:", description = f"8{random.choice(ppmeter)}D", colour="#516BF2")
     await ctx.send(content=ctx.author.mention, embed=embed)
