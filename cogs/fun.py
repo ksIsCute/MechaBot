@@ -11,11 +11,11 @@ def setup(client) -> Cog:
       async with aiohttp.ClientSession() as session:
         img = await session.get(f"https://some-random-api.ml/animu/pat")
         imgjson = await img.json()
-        return await ctx.send(f"{ctx.author.name} pats.. themself? Sounds lonely..\n[]({imgjson['link']})")
+        return await ctx.send(f"{ctx.author.name} pats.. themself? Sounds lonely.. [yikes..]({imgjson['link']})")
     async with aiohttp.ClientSession() as session:
       img = await session.get(f"https://some-random-api.ml/animu/pat")
       imgjson = await img.json()
-      await ctx.send(f"{ctx.author.name} pats {member.name}\n[]({imgjson['link']})")
+      await ctx.send(f"{ctx.author.name} pats {member.name} [cute!]({imgjson['link']})")
   
   # https://some-random-api.ml/animu/pat
   @fun.command(description="Give someone a hug!", aliases=["givehug", "hugmember", "huguser", "userhug", "hug"])
@@ -24,11 +24,11 @@ def setup(client) -> Cog:
       async with aiohttp.ClientSession() as session:
         img = await session.get(f"https://some-random-api.ml/animu/hug")
         imgjson = await img.json()
-        return await ctx.send(f"{ctx.author.name} pats.. themself? How lonely **are** you?\n[]({imgjson['link']})")
+        return await ctx.send(f"{ctx.author.name} pats.. themself? How lonely **are** you? [yikes..]({imgjson['link']})")
     async with aiohttp.ClientSession() as session:
       img = await session.get(f"https://some-random-api.ml/animu/hug")
       imgjson = await img.json()
-      await ctx.send(f"{ctx.author.name} hugged {member.name}\n[]({imgjson['link']})")
+      await ctx.send(f"{ctx.author.name} hugged {member.name} [Cute!]({imgjson['link']})")
   
   @fun.command(description="Get some memes boi (contains 2016 memes)! (May cause loss of brain cells)")
   async def meme(ctx):

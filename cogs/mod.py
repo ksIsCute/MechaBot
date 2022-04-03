@@ -4,7 +4,7 @@ import voltage, asyncio
 import time, json
 import datetime
 from datetime import timedelta
-from utils import Cog, CommandContext
+from utils import Cog
 
 
 def setup(client) -> Cog:
@@ -67,9 +67,9 @@ def setup(client) -> Cog:
   async def ban(ctx, member: voltage.Member):
     if not ctx.author.permissions.ban_members:
       return await ctx.send("You don't have the required permission `ban_members` that is required for this command!")
-    if ctx.author.roles[0] > member.roles[0]:
+    if ctx.author.roles[0] > len(member.roles):
       return await ctx.send("That user is above your top role! I cannot ban them!")
-    if member.roles[0] < client.roles[0]:
+    if len(member.roles) < client.roles[0]:
       return await ctx.send("I couldnt ban the member because I do not have a high enough role to do this!")
     if ctx.author.permissions.ban_members:
       return await ctx.send(f"Attempting to ban {member.mention}!")
