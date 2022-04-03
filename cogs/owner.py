@@ -26,8 +26,8 @@ def setup(client) -> Cog:
               break
       code = "\n".join(f"    {i}" for i in code.splitlines())
       code = f"async def eval_expr():\n{code}" 
-      def send(text):
-        ctx.send(text)
+      async def send(text):
+        await ctx.send(text)
       env = {
           "bot": client,
           "client": client,
@@ -61,5 +61,29 @@ def setup(client) -> Cog:
     else:
       embed = voltage.SendableEmbed(title = "Whoops!", description = "You aren't an owner of this bot!", colour="#FFFF00")
       return await ctx.send(content=ctx.author.mention,embed=embed)
-        
+  
+  @owner.command(description="Change the presence or status of Mecha!")
+  async def status(ctx, *, status, presence=None):
+    if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD":
+      if not presence:
+        await client.set_status(status, voltage.PresenceType.online)
+        return await ctx.send(f"Changed status to `{status}`")
+      else:
+        if presence.lower() == "online":
+          await client.set_status(status, voltage.PresenceType.online)
+          return await ctx.send(f"Changed status to `{status}` and a presence of `Online!`")
+        elif presence.lower() == "idle":
+          await client.set_status(status, voltage.PresenceType.idle)
+          return await ctx.send(f"Changed status to `{status}` and a presence of `Idle`!")
+        elif presence.lower() == "dnd" or "busy":
+          await client.set_status(status, voltage.PresenceType.busy)
+          return await ctx.send(f"Changed status to `{status}` and a presence of `Do Not Disturb`!")
+    else:
+      return await ctx.send("You aren't an owner of this bot!")
+  @owner.command()
+  async def testing(ctx):
+    channel = client.cache.get_channel("01FZBBJJM9R6VYE0M5WJDGKMPT")
+    print(dict(channel))
+    embed = voltage.SendableEmbed(title="New Server alert!", description=f"# Just Joined {ctx.server.name}!\nNow at **{len(client.servers)}** servers!", colour="#00FF00")
+    await ctx.send(content = ctx.author.mention, embed=embed)
   return owner
