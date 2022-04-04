@@ -7,7 +7,7 @@ def setup(client) -> Cog:
 
   @owner.command(name="eval", description="Run commands in multiple languages!")
   async def eval_fn(ctx, *, code):
-    if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD":
+    if ctx.author.id in ["01FZB2QAPRVT8PVMF11480GRCD", "01FZBQCQPT53YTAD86T28WV69X"]:
       languagespecifiers = ["python", "py", "javascript", "js", "html", "css", "php", "md", "markdown", "go", "golang", "c", "c++", "cpp", "c#", "cs", "csharp", "java", "ruby", "rb", "coffee-script", "coffeescript", "coffee", "bash", "shell", "sh", "json", "http", "pascal", "perl", "rust", "sql", "swift", "vim", "xml", "yaml"]
       loops = 0
       while code.startswith("`"):
@@ -64,7 +64,7 @@ def setup(client) -> Cog:
   
   @owner.command(description="Change the presence or status of Mecha!")
   async def status(ctx, *, status, presence=None):
-    if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD":
+    if ctx.author.id in ["01FZB2QAPRVT8PVMF11480GRCD", "01FZBQCQPT53YTAD86T28WV69X"]:
       if not presence:
         await client.set_status(status, voltage.PresenceType.online)
         return await ctx.send(f"Changed status to `{status}`")
@@ -80,10 +80,5 @@ def setup(client) -> Cog:
           return await ctx.send(f"Changed status to `{status}` and a presence of `Do Not Disturb`!")
     else:
       return await ctx.send("You aren't an owner of this bot!")
-  @owner.command()
-  async def testing(ctx):
-    channel = client.cache.get_channel("01FZBBJJM9R6VYE0M5WJDGKMPT")
-    print(dict(channel))
-    embed = voltage.SendableEmbed(title="New Server alert!", description=f"# Just Joined {ctx.server.name}!\nNow at **{len(client.servers)}** servers!", colour="#00FF00")
-    await ctx.send(content = ctx.author.mention, embed=embed)
+      
   return owner

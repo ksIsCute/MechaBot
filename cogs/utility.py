@@ -83,25 +83,25 @@ def setup(client) -> Cog:
         description = f"""
 # {user.name}'s Basic Information:
 ---
-## {user.name.capitalize()}'s User Id: 
-### `{user.id}`
+`{user.name.capitalize()}'s User Id:`
+> {user.id}
 
-## {user.name.capitalize()}'s Avatar:
-### [Click Here!]({user.avatar.url})
+`{user.name.capitalize()}'s Avatar:`
+> [Click Here!]({user.avatar.url})
 ---
 # {user.name.capitalize()}'s Revolt Profile:
 ---
-### {user.name.capitalize()}'s Status:
-{user.status.text}
+`{user.name.capitalize()}'s Status:`
+> {user.status.text}
 
-## {user.name.capitalize()}'s Badges:
-{user.badges}
+`{user.name.capitalize()}'s Badges:`
+> {user.badges}
         
-## {user.name.capitalize()}'s Banner:
-{user.profile.background}
+`{user.name.capitalize()}'s Banner:`
+> {user.profile.background}
 
-## {user.name.capitalize()}'s Bio:
-{user.profile.content}
+`{user.name.capitalize()}'s Bio:`
+> {user.profile.content}
       """,
       color = "#516BF2"
       )

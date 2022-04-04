@@ -51,7 +51,7 @@ def setup(client) -> Cog:
     embed = voltage.SendableEmbed(description=f"# Purged!\nPurged {amount} messages in {round(time.time() - starttime, 2)}s!", color="#00FF00")
     await ctx.send(content=ctx.author.mention, embed=embed)
       
-  @mod.command(description="Set a custom prefix for this server!")
+  @mod.command(description="Set a custom prefix for this server!", aliases=["setprefix", "prefix", "serverprefix", "p", "sp"])
   async def sp(ctx, prefix):
     if ctx.author.permissions.manage_server:
       with open("prefixes.json", "r") as f:

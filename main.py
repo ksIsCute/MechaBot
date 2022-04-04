@@ -4,7 +4,7 @@ from utils import CommandsClient, CommandNotFound, NotEnoughArgs
 from host import alive
 
 async def get_prefix(message, client):
-  with open ("prefixes.json", "r") as f:
+  with open("prefixes.json", "r") as f:
     prefixes = json.load(f)
   if message.server is None:
     return
