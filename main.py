@@ -1,4 +1,4 @@
-import voltage, json, time, asyncio
+import voltage, json, asyncio
 import os, random
 from utils import CommandsClient, CommandNotFound, NotEnoughArgs
 from host import alive
@@ -35,11 +35,18 @@ async def status():
 
 @bot.listen('message')
 async def on_message(message):
+  with open("prefixes.json", "r") as f:
+    prefixes = json.load(f)
+    prefix = prefixes.get(str(message.server.id))
   if message.content == "<@01FZB4GBHDVYY6KT8JH4RBX4KR>":
-    with open("prefixes.json", "r") as f:
-      prefixes = json.load(f)
-      prefix = prefixes.get(str(message.server.id))
     await message.channel.send(f"Pong, {message.author.mention}! My prefix for this server is `{prefix}`")
+  elif message.content.startswith(prefix):
+    print(prefix)
+    print(message.content.startswith(prefix))
+    if message.author.bot is False:
+      pass
+    else:
+      return await message.reply("Not now brethren, you shall not use thy commands.")
   await bot.handle_commands(message)
 
 

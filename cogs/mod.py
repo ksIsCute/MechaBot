@@ -15,10 +15,10 @@ def setup(client) -> Cog:
   async def roles(ctx):
     roles = []
     for role in ctx.server.roles:
-      roles.append(f"# **Name:** {role.name}\n### **ID:** {role.id}\n### **Rank:** {role.rank}\n### **Color:** {role.color}")
+      roles.append(f"**Name:** \n> {role.name}\n**ID:**\n> {role.id}\n**Rank:** \n> {role.rank}\n **Color:** \n> {role.color}")
     embed = voltage.SendableEmbed(
       title = "Confirmed!",
-      description = ", \n# NEXT ROLE \n".join(roles),
+      description = ", \n\n".join(roles),
       color=ctx.author.roles[0].color
     )
     await ctx.send(content="[]()", embed=embed)

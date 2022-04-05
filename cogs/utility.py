@@ -113,25 +113,33 @@ def setup(client) -> Cog:
   async def bio(ctx, *, bio: str):
     if len(bio) > 250:
       return await ctx.send("Your bio is too looooooooooooooooooooooooooong! Make sure its under 250 characters!")
-    retur = re.sub(r"['\"]", '', bio)
+    retur = re.sub("'", '', bio)
     with open("json/bios.json", "r") as f:
       bios = json.load(f)
+    with open("prefixes.json", "r") as f:
+      prefix = json.load(f)
     with open("json/bios.json", "w") as f:
       bios[str(ctx.author.id)] = str(retur)
       json.dump(bios, f, indent=2)
     await ctx.send(f"Set your bio! Check it using `{prefix.get(str(ctx.server.id))}profile`!")
   
-  @util.command()
+  @util.command(description="Check out a users profile or yours!")
   async def profile(ctx, user: voltage.User=None):
     if user is None:
       user = ctx.author
     with open("json/bios.json", "r") as f:
       bio = json.load(f)
+    with open("json/beta.json", "r") as f:
+      beta = json.load(f)
     userbio = bio.get(str(user.id))
+    if userbio is None:
+      with open("prefixes.json", "r") as f:
+        prefix = json.load(f)
+      userbio = f"This user does not have a bio set! Ask them to set a bio using `{prefix.get(str(ctx.server.id))}bio`!"
     embed = voltage.SendableEmbed(
-      title = member.display_name,
-      icon_url = member.display_avatar.url,
-      description = f"{member.display_name}'s bio:\n{str(userbio)}",
+      title = user.display_name,
+      icon_url = user.display_avatar.url,
+      description = f"**{user.display_name}'s bio:**\n> {str(userbio)}\n**{user.display_name} a beta tester?:**\n> Beta `{beta.get(str(ctx.author.id))}`\n",
       color = "#516BF2"
     )
     if userbio == None:
@@ -140,5 +148,46 @@ def setup(client) -> Cog:
       return await ctx.send(f"{user.display_name}'s bio is unset! Tell them to set their bio using `{prefix.get(ctx.server.id)}bio`!")
     await ctx.send(content="[]()", embed=embed)
     # await ctx.send(content="Ok. Here!", embed=embed)
-        
+
+  @util.command(description="Want to test commands and get a cool badge?")
+  async def beta(ctx, arg):
+    if arg.lower() in ["true", "yeah", "yes", "on", "enabled", "online"]:
+      with open("json/beta.json", "r") as f: 
+        beta = json.load(f)
+      with open("json/beta.json", "w") as f:
+        beta[str(ctx.author.id)] = "on"
+        json.dump(beta, f, indent=2)
+      
+      embed=voltage.SendableEmbed(
+        title = ctx.author.display_name,
+        icon_url = ctx.author.display_avatar.url,
+        description=f"Welcome to the beta club, {ctx.author.display_name}!\nWe'll send you some updates [here]() when commands need some testing!",
+        color="#516BF2"
+      )
+    elif arg.lower() in ["no", "false", "nah", "off", "disabled", "offline"]:
+      with open("json/beta.json", "r") as f: 
+        beta = json.load(f)
+      with open("json/beta.json", "w") as f:
+        beta[str(ctx.author.id)] = "off"
+        json.dump(beta, f, indent=2)
+      
+      embed=voltage.SendableEmbed(
+        title = ctx.author.display_name,
+        icon_url = ctx.author.display_avatar.url,
+        description=f"Say goodble to the beta club, {ctx.author.display_name}!\nWe'll miss you! (If you change your mind, you can always come back!)",
+        color="#516BF2"
+      )
+    else:
+      return await ctx.send("You must turn `on` or `off` the beta feature!")
+    await ctx.send(content="[]()", embed=embed)
+
+  @util.command(description="Beta testers only!")
+  async def testing(ctx):
+    with open("json/beta.json", "r") as f: 
+      beta = json.load(f)
+    if beta.get(str(ctx.author.id)) == "on":
+      return await ctx.send("Check back soon!")
+    else:
+      return await ctx.send("This command is for **beta testers** only! Use the `beta` command to register and come back!")
+  
   return util
