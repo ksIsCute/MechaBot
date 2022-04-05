@@ -80,5 +80,11 @@ def setup(client) -> Cog:
           return await ctx.send(f"Changed status to `{status}` and a presence of `Do Not Disturb`!")
     else:
       return await ctx.send("You aren't an owner of this bot!")
-      
+  @owner.command()
+  async def test(ctx):
+    embed = voltage.ImageEmbed(
+      url = "https://i.imgur.com/2LNlDQW.jpg"
+    )
+    await ctx.send(content="[]()", embed=embed)
+    
   return owner
