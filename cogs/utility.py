@@ -1,5 +1,5 @@
 import voltage, asyncio
-import time, aiohttp, json
+import time, aiohttp, json, re
 import datetime, psutil, random
 from datetime import timedelta
 from utils import Cog
@@ -109,31 +109,36 @@ def setup(client) -> Cog:
     else:
       return await ctx.send("Bot profiles coming soon")
 
-  @util.command()
+  @util.command(aliases=["setbio", "sb", "bio", "changebio", "createbio", "cb", "sbio"])
   async def bio(ctx, *, bio: str):
     if len(bio) > 250:
       return await ctx.send("Your bio is too looooooooooooooooooooooooooong! Make sure its under 250 characters!")
+    retur = re.sub(r"['\"]", '', bio)
     with open("json/bios.json", "r") as f:
       bios = json.load(f)
     with open("json/bios.json", "w") as f:
-      bios[str(ctx.author.id)] = str(bio)
+      bios[str(ctx.author.id)] = str(retur)
       json.dump(bios, f, indent=2)
-    await ctx.send("Set your bio! Check it using mybio!")
+    await ctx.send(f"Set your bio! Check it using `{prefix.get(str(ctx.server.id))}profile`!")
   
   @util.command()
-  async def mybio(ctx, user: voltage.User=None):
+  async def profile(ctx, user: voltage.User=None):
     if user is None:
       user = ctx.author
     with open("json/bios.json", "r") as f:
       bio = json.load(f)
     userbio = bio.get(str(user.id))
     embed = voltage.SendableEmbed(
-      title = ctx.author.display_name,
-      icon_url = ctx.author.display_avatar,
-      description = str(userbio),
+      title = member.display_name,
+      icon_url = member.display_avatar.url,
+      description = f"{member.display_name}'s bio:\n{str(userbio)}",
       color = "#516BF2"
     )
-    # await ctx.send(content="[]()", embed=embed)
-    await ctx.send(f"Your bio is:\n{userbio}")
+    if userbio == None:
+      with open("prefixes.json", "r") as f:
+        prefix = json.load(f)
+      return await ctx.send(f"{user.display_name}'s bio is unset! Tell them to set their bio using `{prefix.get(ctx.server.id)}bio`!")
+    await ctx.send(content="[]()", embed=embed)
+    # await ctx.send(content="Ok. Here!", embed=embed)
         
   return util
