@@ -114,12 +114,12 @@ def setup(client) -> Cog:
     if len(bio) > 250:
       return await ctx.send("Your bio is too looooooooooooooooooooooooooong! Make sure its under 250 characters!")
     retur = re.sub("'", '', bio)
-    with open("json/bios.json", "r") as f:
+    with open("json/users.json", "r") as f:
       bios = json.load(f)
     with open("prefixes.json", "r") as f:
       prefix = json.load(f)
-    with open("json/bios.json", "w") as f:
-      bios[str(ctx.author.id)] = str(retur)
+    with open("json/users.json", "w") as f:
+      bios[str(ctx.author.id)]['bio'] = str(retur)
       json.dump(bios, f, indent=2)
     await ctx.send(f"Set your bio! Check it using `{prefix.get(str(ctx.server.id))}profile`!")
   
@@ -127,22 +127,24 @@ def setup(client) -> Cog:
   async def profile(ctx, user: voltage.User=None):
     if user is None:
       user = ctx.author
-    with open("json/bios.json", "r") as f:
-      bio = json.load(f)
-    with open("json/beta.json", "r") as f:
-      beta = json.load(f)
-    userbio = bio.get(str(user.id))
-    if userbio is None:
+    with open("json/users.json", "r") as f:
+      info = json.load(f)
+    with open("prefixes.json", "r") as f:
+      prefix = json.load(f)
+    if user.id not in info:
+      await ctx.send(f"This user does NOT have a profile! Get them to create a profile using `{prefix.get(ctx.server.id)}register`!")
+    userbio = info[user.id]['bio']
+    if userbio == "User has no bio set!":
       with open("prefixes.json", "r") as f:
         prefix = json.load(f)
       userbio = f"This user does not have a bio set! Ask them to set a bio using `{prefix.get(str(ctx.server.id))}bio`!"
     embed = voltage.SendableEmbed(
       title = user.display_name,
       icon_url = user.display_avatar.url,
-      description = f"**{user.display_name}'s bio:**\n> {str(userbio)}\n**{user.display_name} a beta tester?:**\n> Beta `{beta.get(str(ctx.author.id))}`\n",
+      description = f"**{user.display_name}'s bio:**\n> {str(userbio)}\n\n\n**Is {user.display_name} a beta tester?:**\n> `{info[user.id]['beta']}`\n\n\n **Does {user.display_name} have ff mode on?:**\n> `{info[user.id]['ff']}`\n",
       color = "#516BF2"
     )
-    if userbio == None:
+    if userbio == "User has no bio set!":
       with open("prefixes.json", "r") as f:
         prefix = json.load(f)
       return await ctx.send(f"{user.display_name}'s bio is unset! Tell them to set their bio using `{prefix.get(ctx.server.id)}bio`!")
@@ -152,10 +154,10 @@ def setup(client) -> Cog:
   @util.command(description="Want to test commands and get a cool badge?")
   async def beta(ctx, arg):
     if arg.lower() in ["true", "yeah", "yes", "on", "enabled", "online"]:
-      with open("json/beta.json", "r") as f: 
+      with open("json/users.json", "r") as f: 
         beta = json.load(f)
-      with open("json/beta.json", "w") as f:
-        beta[str(ctx.author.id)] = "on"
+      with open("json/users.json", "w") as f:
+        beta[str(ctx.author.id)]['beta'] = "True"
         json.dump(beta, f, indent=2)
       
       embed=voltage.SendableEmbed(
@@ -165,10 +167,10 @@ def setup(client) -> Cog:
         color="#516BF2"
       )
     elif arg.lower() in ["no", "false", "nah", "off", "disabled", "offline"]:
-      with open("json/beta.json", "r") as f: 
+      with open("json/users.json", "r") as f: 
         beta = json.load(f)
-      with open("json/beta.json", "w") as f:
-        beta[str(ctx.author.id)] = "off"
+      with open("json/users.json", "w") as f:
+        beta[str(ctx.author.id)]['beta'] = "False"
         json.dump(beta, f, indent=2)
       
       embed=voltage.SendableEmbed(
@@ -183,9 +185,9 @@ def setup(client) -> Cog:
 
   @util.command(description="Beta testers only!")
   async def testing(ctx):
-    with open("json/beta.json", "r") as f: 
+    with open("json/users.json", "r") as f: 
       beta = json.load(f)
-    if beta.get(str(ctx.author.id)) == "on":
+    if beta[ctx.author.id]['beta'] == "True":
       return await ctx.send("Check back soon!")
     else:
       return await ctx.send("This command is for **beta testers** only! Use the `beta` command to register and come back!")

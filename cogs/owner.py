@@ -1,4 +1,4 @@
-import voltage, asyncio
+import voltage, asyncio, json
 from utils import Cog
 
 def setup(client) -> Cog:
@@ -86,5 +86,23 @@ def setup(client) -> Cog:
       url = "https://i.imgur.com/2LNlDQW.jpg"
     )
     await ctx.send(content="[]()", embed=embed)
-    
+  @owner.command(description="Test our command")
+  async def register(ctx):
+    with open("json/users.json", "r") as f:
+      data = json.load(f)
+    with open("json/users.json", "w") as f:
+      data[ctx.author.id] = {"username": ctx.author.name, "id": ctx.author.id, "bio": "User has no bio set!", "beta": "False", "ff": "False"}
+      json.dump(data, f, indent=2)
+    embed = voltage.SendableEmbed(
+      description = "You're registered!"
+    )
+    await ctx.send(content="[]()", embed=embed)
+  @owner.command(description="Use this after registering")
+  async def ar(ctx):
+    with open("json/users.json", "r") as f:
+      data = json.load(f)
+    embed = voltage.SendableEmbed(
+      description = f"{data[ctx.author.id]['username']}'s profile:\n\n**Bio:**\n{data[ctx.author.id]['bio']}\n\n**User's settings:**\n\nBeta: `{data[ctx.author.id]['beta']}`\nFamily Friendly Mode: `{data[ctx.author.id]['ff']}`"
+    )
+    await ctx.send(content="[]()", embed=embed)
   return owner
