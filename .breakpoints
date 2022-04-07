@@ -1,0 +1,20 @@
+{
+  "files": {
+    "cogs/owner.py": [
+      {
+        "id": "6515ec7f-8d95-4819-8af5-f3bcc2fb995c",
+        "line": 89,
+        "version": 2145,
+        "index": 3745
+      }
+    ],
+    "cogs/utility.py": [
+      {
+        "id": "42d98f26-36e1-46a3-9c85-b094b8690327",
+        "line": 193,
+        "version": 5472,
+        "index": 8119
+      }
+    ]
+  }
+}

@@ -4,7 +4,7 @@ import voltage, asyncio
 import time, json
 import datetime
 from datetime import timedelta
-from utils import Cog, CommandContext
+from utils import Cog
 
 
 def setup(client) -> Cog:
@@ -15,10 +15,10 @@ def setup(client) -> Cog:
   async def roles(ctx):
     roles = []
     for role in ctx.server.roles:
-      roles.append(f"# **Name:** {role.name}\n### **ID:** {role.id}\n### **Rank:** {role.rank}\n### **Color:** {role.color}")
+      roles.append(f"**Name:** \n> {role.name}\n**ID:**\n> {role.id}\n**Rank:** \n> {role.rank}\n **Color:** \n> {role.color}")
     embed = voltage.SendableEmbed(
       title = "Confirmed!",
-      description = ", \n# NEXT ROLE \n".join(roles),
+      description = ", \n\n".join(roles),
       color=ctx.author.roles[0].color
     )
     await ctx.send(content="[]()", embed=embed)
@@ -51,7 +51,7 @@ def setup(client) -> Cog:
     embed = voltage.SendableEmbed(description=f"# Purged!\nPurged {amount} messages in {round(time.time() - starttime, 2)}s!", color="#00FF00")
     await ctx.send(content=ctx.author.mention, embed=embed)
       
-  @mod.command(description="Set a custom prefix for this server!")
+  @mod.command(description="Set a custom prefix for this server!", aliases=["setprefix", "prefix", "serverprefix", "p", "sp"])
   async def sp(ctx, prefix):
     if ctx.author.permissions.manage_server:
       with open("prefixes.json", "r") as f:
@@ -67,9 +67,9 @@ def setup(client) -> Cog:
   async def ban(ctx, member: voltage.Member):
     if not ctx.author.permissions.ban_members:
       return await ctx.send("You don't have the required permission `ban_members` that is required for this command!")
-    if ctx.author.roles[0] > member.roles[0]:
+    if ctx.author.roles[0] > len(member.roles):
       return await ctx.send("That user is above your top role! I cannot ban them!")
-    if member.roles[0] < client.roles[0]:
+    if len(member.roles) < client.roles[0]:
       return await ctx.send("I couldnt ban the member because I do not have a high enough role to do this!")
     if ctx.author.permissions.ban_members:
       return await ctx.send(f"Attempting to ban {member.mention}!")

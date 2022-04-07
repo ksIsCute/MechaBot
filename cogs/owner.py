@@ -1,4 +1,4 @@
-import voltage, asyncio
+import voltage, asyncio, json
 from utils import Cog
 
 def setup(client) -> Cog:
@@ -7,7 +7,7 @@ def setup(client) -> Cog:
 
   @owner.command(name="eval", description="Run commands in multiple languages!")
   async def eval_fn(ctx, *, code):
-    if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD":
+    if ctx.author.id in ["01FZB2QAPRVT8PVMF11480GRCD", "01FZBQCQPT53YTAD86T28WV69X"]:
       languagespecifiers = ["python", "py", "javascript", "js", "html", "css", "php", "md", "markdown", "go", "golang", "c", "c++", "cpp", "c#", "cs", "csharp", "java", "ruby", "rb", "coffee-script", "coffeescript", "coffee", "bash", "shell", "sh", "json", "http", "pascal", "perl", "rust", "sql", "swift", "vim", "xml", "yaml"]
       loops = 0
       while code.startswith("`"):
@@ -64,7 +64,7 @@ def setup(client) -> Cog:
   
   @owner.command(description="Change the presence or status of Mecha!")
   async def status(ctx, *, status, presence=None):
-    if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD":
+    if ctx.author.id in ["01FZB2QAPRVT8PVMF11480GRCD", "01FZBQCQPT53YTAD86T28WV69X"]:
       if not presence:
         await client.set_status(status, voltage.PresenceType.online)
         return await ctx.send(f"Changed status to `{status}`")
@@ -81,9 +81,28 @@ def setup(client) -> Cog:
     else:
       return await ctx.send("You aren't an owner of this bot!")
   @owner.command()
-  async def testing(ctx):
-    channel = client.cache.get_channel("01FZBBJJM9R6VYE0M5WJDGKMPT")
-    print(dict(channel))
-    embed = voltage.SendableEmbed(title="New Server alert!", description=f"# Just Joined {ctx.server.name}!\nNow at **{len(client.servers)}** servers!", colour="#00FF00")
-    await ctx.send(content = ctx.author.mention, embed=embed)
+  async def test(ctx):
+    embed = voltage.ImageEmbed(
+      url = "https://i.imgur.com/2LNlDQW.jpg"
+    )
+    await ctx.send(content="[]()", embed=embed)
+  @owner.command(description="Test our command")
+  async def register(ctx):
+    with open("json/users.json", "r") as f:
+      data = json.load(f)
+    with open("json/users.json", "w") as f:
+      data[ctx.author.id] = {"username": ctx.author.name, "id": ctx.author.id, "bio": "User has no bio set!", "beta": "False", "ff": "False"}
+      json.dump(data, f, indent=2)
+    embed = voltage.SendableEmbed(
+      description = "You're registered!"
+    )
+    await ctx.send(content="[]()", embed=embed)
+  @owner.command(description="Use this after registering")
+  async def ar(ctx):
+    with open("json/users.json", "r") as f:
+      data = json.load(f)
+    embed = voltage.SendableEmbed(
+      description = f"{data[ctx.author.id]['username']}'s profile:\n\n**Bio:**\n{data[ctx.author.id]['bio']}\n\n**User's settings:**\n\nBeta: `{data[ctx.author.id]['beta']}`\nFamily Friendly Mode: `{data[ctx.author.id]['ff']}`"
+    )
+    await ctx.send(content="[]()", embed=embed)
   return owner

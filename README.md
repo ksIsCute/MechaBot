@@ -11,7 +11,7 @@
 
 - Moderation
 - Utility
-- Settings (in development)
+- Settings (in utility like bio, beta, ff, and prefixes (in mod))
 - Owner Only
 - Fun
 
