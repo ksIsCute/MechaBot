@@ -30,7 +30,6 @@ async def status():
     ]
     status = random.choice(statuses)
     await bot.set_status(status, voltage.PresenceType.online)
-    print(f"Set status to {status}")
     await asyncio.sleep(5)
 
 @bot.listen('message')

@@ -1,79 +1,23 @@
 {
-  "01FZBQCQPT53YTAD86T28WV69X": {
-    "username": "ks_",
-    "id": "01FZBQCQPT53YTAD86T28WV69X",
-    "bio": "User has no bio set!",
-    "beta": "False",
-    "ff": "False"
-  },
-  "01FVB1ZGCPS8TJ4PD4P7NAFDZA": {
-    "username": "1malan",
-    "id": "01FVB1ZGCPS8TJ4PD4P7NAFDZA",
-    "bio": "Test",
-    "beta": "False",
-    "ff": "False"
-  },
   "01FZB2QAPRVT8PVMF11480GRCD": {
     "username": "css",
     "id": "01FZB2QAPRVT8PVMF11480GRCD",
-    "bio": "this is my cool and epic bio",
-    "beta": "True",
-    "ff": "False"
-  },
-  "01FXHEPFK2K08N16NDXBF5TPFF": {
-    "username": "tallship",
-    "id": "01FXHEPFK2K08N16NDXBF5TPFF",
-    "bio": "Contact info: @tallship:matrix.org - Vger community support at Revolt: https://app.revolt.chat/invite/TAfhhpRK",
-    "beta": "True",
-    "ff": "False"
-  },
-  "01FXNNW0T7J72BJJSV6AGNJ5YS": {
-    "username": "delta2571",
-    "id": "01FXNNW0T7J72BJJSV6AGNJ5YS",
-    "bio": "# i fucked your mom shit lips",
-    "beta": "True",
-    "ff": "False"
-  },
-  "01FX0KYMRPHTQNW11GJJJ3PQX3": {
-    "username": "b1ue64",
-    "id": "01FX0KYMRPHTQNW11GJJJ3PQX3",
-    "bio": "im based",
-    "beta": "True",
-    "ff": "False"
-  },
-  "01FWXJEHNR87E0HXDMSMDZ7ZAW": {
-    "username": "McInooted_",
-    "id": "01FWXJEHNR87E0HXDMSMDZ7ZAW",
-    "bio": "I love The Grand Tour",
-    "beta": "True",
-    "ff": "False"
-  },
-  "01EXAF3KX65608AJ4NG27YG1HM": {
-    "username": "jan",
-    "id": "01EXAF3KX65608AJ4NG27YG1HM",
-    "bio": "# cock",
-    "beta": "False",
-    "ff": "False"
-  },
-  "01FZB4GBHDVYY6KT8JH4RBX4KR": {
-    "username": "Mecha",
-    "id": "01FZB4GBHDVYY6KT8JH4RBX4KR",
-    "bio": "Thanks for looking at my profile! Heres an easter egg, :egg:!",
-    "beta": "True",
-    "ff": "True"
-  },
-  "01FGW9JTJVY71ZXCXA7AZA0H3K": {
-    "username": "z3",
-    "id": "01FGW9JTJVY71ZXCXA7AZA0H3K",
     "bio": "User has no bio set!",
-    "beta": "True",
-    "ff": "False"
+    "beta": "False",
+    "ff": "False",
+    "notifications": [
+      "Apr 07 | testing",
+      "Apr 07 | testing"
+    ]
   },
-  "01FM1B8WHWAD0JXX4JR96CAPM3": {
-    "username": "sneexy",
-    "id": "01FM1B8WHWAD0JXX4JR96CAPM3",
-    "bio": "https://autumn.revolt.chat/attachments/eRjWqcSDWLVZ-v3y1IlTfa7DhZXNH3Zw9J0b05fiO3/kernel_panic_jumpscare.mp4",
-    "beta": "True",
-    "ff": "False"
+  "01FZFK15H4NXDQYXFWEC0V9XHC": {
+    "username": "Horu",
+    "id": "01FZFK15H4NXDQYXFWEC0V9XHC",
+    "bio": "User has no bio set!",
+    "beta": "False",
+    "ff": "False",
+    "notifications": [
+      "Apr 07 | testing"
+    ]
   }
 }

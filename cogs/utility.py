@@ -8,9 +8,77 @@ from mcstatus import JavaServer
 starttime = time.time()
 
 def setup(client) -> Cog:
-
+  
   util = Cog("Utility", "Check out some epic utility commands!")
 
+  @util.command(description="Get basic information on a server!")
+  async def serverinfo(ctx):
+    with open("json/servers.json", "r") as f:
+      data = json.load(f)
+    if ctx.server.id not in data:
+      try:
+        with open("json/servers.json", "w") as f:
+          data[ctx.server.id] = {"name": ctx.server.name, "members": str(len(ctx.server.members)), "owner": ctx.server.owner.id, "ownername": ctx.server.owner.name, "banner": ctx.server.banner.url, "icon": ctx.server.icon.url}
+          json.dump(data, f, indent=2)
+          embed = voltage.SendableEmbed(
+            description = "Your server wasnt registered in our database, but it is now!",
+            color = "#00FF00"
+          )
+          return await ctx.send(content="[]()", embed=embed)
+      except Exception as e:
+        return await ctx.send(e)
+    elif ctx.server.owner.name != data[ctx.server.id]['ownername']:
+      with open("json/servers.json", "w") as f:
+        data[ctx.server.id] = {"name": ctx.server.name, "members": str(len(ctx.server.members)), "owner": ctx.server.owner.id, "ownername": ctx.server.owner.name, "banner": ctx.server.banner.url, "icon": ctx.server.icon.url}
+        json.dump(data, f, indent=2)
+        embed = voltage.SendableEmbed(
+          description = "Your server wasnt registered in our database, but it is now!",
+          color = "#00FF00"
+        )
+        return await ctx.send(content="[]()", embed=embed)
+    else:
+      info = data[ctx.server.id]
+      embed = voltage.SendableEmbed(
+        title = ctx.author.display_name,
+        icon_url = ctx.author.display_avatar.url,
+        description = f"**Information on {info['name']}!**\n\n**Server Owner:**\n> `{info['ownername']}`\n",
+        media = info['banner']
+      )
+      await ctx.send(content="[]()", embed=embed)
+      
+    
+  
+  @util.command(description="Removes some of the nsfw commands and makes Mecha family friendly PG clean")
+  async def ff(ctx, arg):
+    if arg.lower() in ['yes', 'on', "activated", "y", "online", "true"]:
+      with open("json/users.json", "r") as f:
+        data = json.load(f)
+        
+      with open("json/users.json", "w") as f:
+        data[ctx.author.id]['ff'] = "True"
+        json.dump(data, f, indent=2)
+      embed = voltage.SendableEmbed(
+        title = ctx.author.display_name,
+        icon_url = ctx.author.display_avatar.url,
+        description="Family friend mode `Activated`! | 😇",
+        color="#00FF00"
+      )
+      await ctx.send(content="[]()", embed=embed)
+    if arg.lower() in ['no', 'false', 'off', 'deny', 'removed', 'n']:
+      with open("json/users.json", "r") as f:
+        data = json.load(f)
+        
+      with open("json/users.json", "w") as f:
+        data[ctx.author.id]['ff'] = "False"
+        json.dump(data, f, indent=2)
+      embed = voltage.SendableEmbed(
+        title = ctx.author.display_name,
+        icon_url = ctx.author.display_avatar.url,
+        description="Family friend mode `Deactivated`! | 😈",
+        color="#00FF00"
+      )
+      await ctx.send(content="[]()", embed=embed)
+  
   @util.command(description="Get the color of a hex code as an image!")
   async def gc(ctx, hex):
       embed = voltage.SendableEmbed(

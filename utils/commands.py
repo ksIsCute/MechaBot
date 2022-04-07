@@ -280,7 +280,7 @@ class CommandsClient(voltage.Client):
         self.prefix = prefix
         self.cogs: dict[str, Cog] = {}
         self.extensions: dict[str, tuple[ModuleType, str]] = {}
-        self.commands: dict[str, Command] = {"help": Command(self.help, "help", "Displays help for a command.", ["h", "help"], None)}
+        self.commands: dict[str, Command] = {"help": Command(self.help, "help", "Displays help for any command on Mecha.", ["h", "help", "cmds", "commands", "allcmds", "helpme", "helps", "halp", "allcommands", "cmdz"], None)}
 
     async def help(self, ctx: CommandContext, target: Optional[str] = None):
         """
@@ -288,15 +288,15 @@ class CommandsClient(voltage.Client):
         """
         prefix = await self.get_prefix(ctx.message, self.prefix)
         if target is None:
-            embed = voltage.SendableEmbed(title = "Help", description = f"Use `{prefix}help <command>` to get help for any command!", colour = "#516BF2", icon_url = ctx.me.user.display_avatar.url, media="https://i.imgur.com/puCxbsE.jpg")
-            text = "\n### **No Category**\n"
+            embed = voltage.SendableEmbed(title = "Help", description = f"Use `{prefix}help <command name>` to get help for any command!", colour = "#516BF2", icon_url = ctx.author.display_avatar.url, media="https://i.imgur.com/puCxbsE.jpg")
+            text = "\n### **Other Commands:**\n"
             for command in self.commands.values():
                 if command.cog is None:
                     text += f"> {command.name}\n"
             for i in self.cogs.values():
-                text += f"\n### **{i.name}**\n{i.description}\n"
+                text += f"\n### **{i.name}:**\n*{i.description}*\n"
                 for j in i.commands:
-                    text += f"\n> {j.name}"
+                    text += f"\n> {prefix}{j.name}"
             embed.description += text
             return await ctx.reply(ctx.author.mention, embed=embed)
         elif target in self.commands:
@@ -307,11 +307,11 @@ class CommandsClient(voltage.Client):
             for (name, data) in list(command.signature.parameters.items())[1:]:
                 default = f" = {data.default}" if (data.default is not _empty) and (data.default is not None) else ""
                 usage += f" [{name}{default}]" if data.default is not _empty else f" <{name}>"
-            text += f"\n### **Usage**\n> `{prefix}{command.name}{usage}`"
+            text += f"\n### **Command Usage:**\n> `{prefix}{command.name}{usage}`"
             if command.aliases:
-                text += f"\n\n### **Aliases**\n> {prefix}{', '.join(command.aliases)}"
+                text += f"\n\n### **Other Command Names:**\n> {prefix}{', '.join(command.aliases)}"
             embed.description = command.description + text if command.description else text
-            return await ctx.reply(ctx.author.mention, embed=embed)
+            return await ctx.reply("[]()", embed=embed)
         await ctx.reply(f"Command {target} not found.")
 
     async def get_prefix(self, message: voltage.Message, prefix: Union[str, list[str], Callable[[voltage.Message, CommandsClient], Awaitable[Any]]]) -> str:

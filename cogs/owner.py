@@ -1,4 +1,4 @@
-import voltage, asyncio, json
+import voltage, asyncio, json, datetime
 from utils import Cog
 
 def setup(client) -> Cog:
@@ -86,17 +86,66 @@ def setup(client) -> Cog:
       url = "https://i.imgur.com/2LNlDQW.jpg"
     )
     await ctx.send(content="[]()", embed=embed)
+
   @owner.command(description="Test our command")
   async def register(ctx):
+
     with open("json/users.json", "r") as f:
       data = json.load(f)
+    if ctx.author.id in data:
+      return await ctx.send("You're already registered!")
     with open("json/users.json", "w") as f:
-      data[ctx.author.id] = {"username": ctx.author.name, "id": ctx.author.id, "bio": "User has no bio set!", "beta": "False", "ff": "False"}
+      data[ctx.author.id] = {"username": ctx.author.name, "id": ctx.author.id, "bio": "User has no bio set!", "beta": "False", "ff": "False", "notifications": []}
       json.dump(data, f, indent=2)
+    with open("json/servers.json", "r") as g:
+      sdata = json.load(g)
+    with open("json/servers.json", "w") as g:
+      sdata[ctx.server.id] = {"name": ctx.server.name, "members": str(len(ctx.server.members)), "owner": ctx.server.owner.id, "ownername": ctx.server.owner.name, "banner": ctx.server.banner.url or "No Banner", "icon": ctx.server.icon.url or "No Icon"}
+      json.dump(sdata, g, indent=2)
     embed = voltage.SendableEmbed(
-      description = "You're registered!"
+      description = "## You're registered!\nServer and User registered!"
     )
     await ctx.send(content="[]()", embed=embed)
+
+  @owner.command(description="Send a notification to every user registered!")
+  async def notify(ctx, message):
+    if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD":
+      with open("json/users.json", "r") as f:
+        data = json.load(f)
+      date = datetime.datetime.now()
+      format = f"{date.strftime('%b %d')} | {message}"
+      with open("json/users.json", "w") as f:
+        for id in data:
+          data[id]['notifications'].append(format)
+        json.dump(data, f, indent=2)
+
+  @owner.command(description="View your notifications!")
+  async def inbox(ctx):
+    with open("json/users.json", "r") as f:
+      data = json.load(f)
+    notifications = data[ctx.author.id]['notifications']
+    notificationlist = []
+    for notification in data[ctx.author.id]['notifications']:
+      notificationlist.append(notification)
+    embed = voltage.SendableEmbed(
+      title = f"Your inbox: ({len(data[ctx.author.id]['notifications'])})",
+      icon_url = ctx.author.display_avatar.url,
+      description = "\n".join(notificationlist),
+      color = "#00FF00"
+    )
+    await ctx.send(content="[]()", embed=embed)
+    await ctx.send("Do you want to clear your inbox?\n`y` or `n`?")
+    await client.wait_for("message", check=lambda message: message.author == client.user)
+    if ctx.message.content.lower() in ["yes", 'sure', 'y', 'yeah', 'yessir', 'duh']:
+      with open("json/users.json", "w") as f:
+        for notification in data[ctx.author.id]['notifications']:
+          notification.remove(notifications)
+          json.dump(data, f, indent=2)
+      return await ctx.send(f"Removed {len(notifications)} notification(s)")
+    else:
+      return await ctx.send("Cancelled, didnt remove any notifications.")
+    
+  
   @owner.command(description="Use this after registering")
   async def ar(ctx):
     with open("json/users.json", "r") as f:
