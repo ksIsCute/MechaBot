@@ -132,7 +132,7 @@ def setup(client) -> Cog:
     with open("prefixes.json", "r") as f:
       prefix = json.load(f)
     if user.id not in info:
-      await ctx.send(f"This user does NOT have a profile! Get them to create a profile using `{prefix.get(ctx.server.id)}register`!")
+      return await ctx.send(f"This user does NOT have a profile! Get them to create a profile using `{prefix.get(ctx.server.id)}register`!")
     userbio = info[user.id]['bio']
     if userbio == "User has no bio set!":
       with open("prefixes.json", "r") as f:
@@ -141,7 +141,7 @@ def setup(client) -> Cog:
     embed = voltage.SendableEmbed(
       title = user.display_name,
       icon_url = user.display_avatar.url,
-      description = f"**{user.display_name}'s bio:**\n> {str(userbio)}\n\n\n**Is {user.display_name} a beta tester?:**\n> `{info[user.id]['beta']}`\n\n\n **Does {user.display_name} have ff mode on?:**\n> `{info[user.id]['ff']}`\n",
+      description = f"**{user.display_name}'s bio:**\n> {str(userbio)}\n\n\n**Is {user.display_name} a beta tester?:**\n> `{info[user.id]['beta']}`\n\n\n **Does {user.display_name} have family friendly mode on?:**\n> `{info[user.id]['ff']}`\n",
       color = "#516BF2"
     )
     if userbio == "User has no bio set!":
@@ -176,7 +176,7 @@ def setup(client) -> Cog:
       embed=voltage.SendableEmbed(
         title = ctx.author.display_name,
         icon_url = ctx.author.display_avatar.url,
-        description=f"Say goodble to the beta club, {ctx.author.display_name}!\nWe'll miss you! (If you change your mind, you can always come back!)",
+        description=f"Say goodbye to the beta club, {ctx.author.display_name}!\nWe'll miss you! (If you change your mind, you can always come back!)",
         color="#516BF2"
       )
     else:
