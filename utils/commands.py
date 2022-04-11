@@ -6,7 +6,8 @@ from shlex import split
 from itertools import zip_longest
 from importlib import import_module, reload
 
-import voltage
+import voltage, json
+
 
 class CommandNotFound(Exception):
     """
@@ -17,11 +18,13 @@ class CommandNotFound(Exception):
     command: :class:`str`
         The name of the command that was not found.
     """
+
     def __init__(self, command: str):
         self.command = command
 
     def __str__(self):
-        return f"Command {self.command} not found"
+        return f"Command {self.command} not found!"
+
 
 class NotEnoughArgs(Exception):
     """
@@ -36,6 +39,7 @@ class NotEnoughArgs(Exception):
     actual: :class:`int`
         The number of args that were actually supplied.
     """
+
     def __init__(self, command: Command, expected: int, actual: int):
         self.command = command
         self.expected = expected
@@ -43,6 +47,7 @@ class NotEnoughArgs(Exception):
 
     def __str__(self):
         return f"{self.command.name} expected {self.expected} args, got {self.actual}"
+
 
 class MemberNotFound(Exception):
     """
@@ -53,11 +58,13 @@ class MemberNotFound(Exception):
     given: :class:`str`
         The name of the member that was not found.
     """
+
     def __init__(self, given: str):
         self.given = given
 
     def __str__(self):
-        return f"Member {self.given} not found"
+        return f"Member {self.given} not found!"
+
 
 class UserNotFound(Exception):
     """
@@ -68,11 +75,13 @@ class UserNotFound(Exception):
     given: :class:`str`
         The name of the user that was not found.
     """
+
     def __init__(self, given: str):
         self.given = given
 
     def __str__(self):
-        return f"User {self.given} not found"
+        return f"User {self.given} not found!"
+
 
 class CommandContext:
     """
@@ -93,19 +102,34 @@ class CommandContext:
     command: :class:`Command`
         The command that was invoked.
     """
-    __slots__ = ('message', 'content', 'author', 'channel', 'server', 'send', 'reply', 'delete', 'command', 'me')
 
-    def __init__(self, message: voltage.Message, command: Command, client: voltage.Client):
+    __slots__ = (
+        "message",
+        "content",
+        "author",
+        "channel",
+        "server",
+        "send",
+        "reply",
+        "delete",
+        "command",
+        "me",
+    )
+
+    def __init__(
+        self, message: voltage.Message, command: Command, client: voltage.Client
+    ):
         self.message = message
         self.content = message.content
         self.author = message.author
         self.channel = message.channel
         self.server = message.server
-        self.send = message.channel.send # type: ignore
+        self.send = message.channel.send  # type: ignore
         self.reply = message.reply
         self.delete = message.delete
         self.command = command
         self.me = client
+
 
 class Command:
     """
@@ -120,9 +144,25 @@ class Command:
     aliases: Optional[List[:class:`str`]]
         The aliases of the command.
     """
-    __slots__ = ('func', 'name', 'description', 'aliases', 'error_handler', 'signature', 'cog')
 
-    def __init__(self, func: Callable[..., Awaitable[Any]], name: Optional[str] = None, description: Optional[str] = None, aliases: Optional[list[str]] = None, cog: Optional[Cog] = None):
+    __slots__ = (
+        "func",
+        "name",
+        "description",
+        "aliases",
+        "error_handler",
+        "signature",
+        "cog",
+    )
+
+    def __init__(
+        self,
+        func: Callable[..., Awaitable[Any]],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        aliases: Optional[list[str]] = None,
+        cog: Optional[Cog] = None,
+    ):
         self.func = func
         self.name = name or func.__name__
         self.description = description or func.__doc__
@@ -143,7 +183,9 @@ class Command:
         self.error_handler = func
         return self
 
-    async def convert_arg(self, arg: Parameter, given: str, context: CommandContext) -> Any:
+    async def convert_arg(
+        self, arg: Parameter, given: str, context: CommandContext
+    ) -> Any:
         annotation = arg.annotation
         if given is None:
             return None
@@ -156,7 +198,7 @@ class Command:
         elif issubclass(annotation, float):
             return float(given)
         elif issubclass(annotation, voltage.Member):
-            member = context.server.get_member(given) # type: ignore
+            member = context.server.get_member(given)  # type: ignore
             if member is None:
                 raise MemberNotFound(given)
             return member
@@ -167,20 +209,25 @@ class Command:
             return user
 
     async def invoke(self, context: CommandContext, prefix: str):
-        if len(( params := self.signature.parameters )) > 1:
-            given = split(context.content[len(prefix+self.name):])
+        if len((params := self.signature.parameters)) > 1:
+            given = split(context.content[len(prefix + self.name) :])
             args = []
             kwargs = {}
 
-            for i, (param, arg) in enumerate(zip_longest(list(params.items())[1:], given)):
+            for i, (param, arg) in enumerate(
+                zip_longest(list(params.items())[1:], given)
+            ):
                 if param is None:
                     break
                 name, data = param
 
-                if data.kind == data.VAR_POSITIONAL or data.kind == data.POSITIONAL_OR_KEYWORD:
+                if (
+                    data.kind == data.VAR_POSITIONAL
+                    or data.kind == data.POSITIONAL_OR_KEYWORD
+                ):
                     if arg is None:
                         if data.default is _empty:
-                            raise NotEnoughArgs(self, len(params)-1, len(args))
+                            raise NotEnoughArgs(self, len(params) - 1, len(args))
                         arg = data.default
                     args.append(await self.convert_arg(data, arg, context))
 
@@ -188,14 +235,18 @@ class Command:
                     if i == len(params) - 2:
                         if arg is None:
                             if data.default is _empty:
-                                raise NotEnoughArgs(self, len(params)-1, len(given))
-                            kwargs[name] = await self.convert_arg(data, data.default, context)
+                                raise NotEnoughArgs(self, len(params) - 1, len(given))
+                            kwargs[name] = await self.convert_arg(
+                                data, data.default, context
+                            )
                             break
-                        kwargs[name] = await self.convert_arg(data, " ".join(given[i:]), context)
+                        kwargs[name] = await self.convert_arg(
+                            data, " ".join(given[i:]), context
+                        )
                     else:
                         if arg is None:
                             if data.default is _empty:
-                                raise NotEnoughArgs(self, len(params)-1, len(given))
+                                raise NotEnoughArgs(self, len(params) - 1, len(given))
                             arg = data.default
                         kwargs[name] = await self.convert_arg(data, arg, context)
 
@@ -211,7 +262,7 @@ class Command:
             except Exception as e:
                 return await self.error_handler(e, context)
         return await self.func(context)
-        
+
 
 class Cog:
     """
@@ -226,17 +277,18 @@ class Cog:
     commands: List[:class:`Command`]
         The commands in the cog.
     """
-    __slots__ = ('name', 'description', 'commands')
+
+    __slots__ = ("name", "description", "commands")
 
     def __init__(self, name: str, description: Optional[str] = None):
         self.name = name
         self.description = description
-        self.commands: list[Command] = [] 
+        self.commands: list[Command] = []
 
     def add_command(self, command: Command):
         """
         Adds a command to the cog.
-        
+
         idk why you're doing thit but consider using the decorator for this /shrug.
 
         Parameters
@@ -246,7 +298,12 @@ class Cog:
         """
         self.commands.append(command)
 
-    def command(self, name: Optional[str] = None, description: Optional[str] = None, aliases: Optional[list[str]] = None):
+    def command(
+        self,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        aliases: Optional[list[str]] = None,
+    ):
         """
         A decorator for adding commands to the cog.
 
@@ -259,11 +316,14 @@ class Cog:
         aliases: Optional[List[:class:`str`]]
             The aliases of the command.
         """
+
         def decorator(func: Callable[..., Awaitable[Any]]):
             command = Command(func, name, description, aliases, self)
             self.add_command(command)
             return command
+
         return decorator
+
 
 class CommandsClient(voltage.Client):
     """
@@ -274,47 +334,99 @@ class CommandsClient(voltage.Client):
     cogs: List[:class:`Cog`]
         The cogs that are loaded.
     """
-    def __init__(self, prefix: Union[str, list[str], Callable[[voltage.Message, CommandsClient], Awaitable[Any]]]):
+
+    def __init__(
+        self,
+        prefix: Union[
+            str, list[str], Callable[[voltage.Message, CommandsClient], Awaitable[Any]]
+        ],
+    ):
         super().__init__()
         self.listeners = {"message": self.handle_commands}
         self.prefix = prefix
         self.cogs: dict[str, Cog] = {}
-        self.extensions: dict[str, tuple[ModuleType, str]] = {}
-        self.commands: dict[str, Command] = {"help": Command(self.help, "help", "Displays help for any command on Mecha.", ["h", "help", "cmds", "commands", "allcmds", "helpme", "helps", "halp", "allcommands", "cmdz"], None)}
+        self.extensions: dict[str, ModuleType] = {}
+        self.commands: dict[str, Command] = {
+            "help": Command(
+                self.help, "help", "Displays help for a command.", ["h", "help"], None
+            )
+        }
 
     async def help(self, ctx: CommandContext, target: Optional[str] = None):
         """
         Basic help command.
         """
+        with open("json/users.json", "r") as f:
+            data = json.load(f)
+        if ctx.author.id in data:
+            pass
+        elif ctx.author.id not in data:
+            with open("json/users.json", "w") as f:
+                data[ctx.author.id] = {
+                    "username": ctx.author.name,
+                    "id": ctx.author.id,
+                    "bio": "User has no bio set!",
+                    "beta": "False",
+                    "ff": "False",
+                    "notifications": ["Welcome to Mecha! This command goes away after reading, so you dont need to do anything after this!"]
+                }
+                json.dump(data, f, indent=2)
         prefix = await self.get_prefix(ctx.message, self.prefix)
         if target is None:
-            embed = voltage.SendableEmbed(title = "Help", description = f"Use `{prefix}help <command name>` to get help for any command!", colour = "#516BF2", icon_url = ctx.author.display_avatar.url, media="https://i.imgur.com/puCxbsE.jpg")
-            text = "\n### **Other Commands:**\n"
+            embed = voltage.SendableEmbed(
+                title="Help",
+                description=f"Use `{prefix}help <command>` to get help for any command!",
+                colour="#516BF2",
+                icon_url=ctx.me.user.display_avatar.url,
+                media="https://i.imgur.com/puCxbsE.jpg",
+            )
+            text = "\n### **No Category**\n"
             for command in self.commands.values():
                 if command.cog is None:
                     text += f"> {command.name}\n"
             for i in self.cogs.values():
-                text += f"\n### **{i.name}:**\n*{i.description}*\n"
+                text += f"\n### **{i.name}**\n{i.description}\n"
                 for j in i.commands:
-                    text += f"\n> {prefix}{j.name}"
+                    text += f"\n> {j.name}"
             embed.description += text
             return await ctx.reply(ctx.author.mention, embed=embed)
         elif target in self.commands:
             command = self.commands[target]
-            embed = voltage.SendableEmbed(title = f"Help for {command.name}", colour = "#516BF2", icon_url = ctx.me.user.display_avatar.url, media="https://i.imgur.com/puCxbsE.jpg")
+            embed = voltage.SendableEmbed(
+                title=f"Help for {command.name}",
+                colour="#516BF2",
+                icon_url=ctx.me.user.display_avatar.url,
+                media="https://i.imgur.com/puCxbsE.jpg",
+            )
             text = str()
             usage = str()
             for (name, data) in list(command.signature.parameters.items())[1:]:
-                default = f" = {data.default}" if (data.default is not _empty) and (data.default is not None) else ""
-                usage += f" [{name}{default}]" if data.default is not _empty else f" <{name}>"
-            text += f"\n### **Command Usage:**\n> `{prefix}{command.name}{usage}`"
+                default = (
+                    f" = {data.default}"
+                    if (data.default is not _empty) and (data.default is not None)
+                    else ""
+                )
+                usage += (
+                    f" [{name}{default}]"
+                    if data.default is not _empty
+                    else f" <{name}>"
+                )
+            text += f"\n### **Usage**\n> `{prefix}{command.name}{usage}`"
             if command.aliases:
-                text += f"\n\n### **Other Command Names:**\n> {prefix}{', '.join(command.aliases)}"
-            embed.description = command.description + text if command.description else text
-            return await ctx.reply("[]()", embed=embed)
+                text += f"\n\n### **Aliases**\n> {prefix}{', '.join(command.aliases)}"
+            embed.description = (
+                command.description + text if command.description else text
+            )
+            return await ctx.reply(ctx.author.mention, embed=embed)
         await ctx.reply(f"Command {target} not found.")
 
-    async def get_prefix(self, message: voltage.Message, prefix: Union[str, list[str], Callable[[voltage.Message, CommandsClient], Awaitable[Any]]]) -> str:
+    async def get_prefix(
+        self,
+        message: voltage.Message,
+        prefix: Union[
+            str, list[str], Callable[[voltage.Message, CommandsClient], Awaitable[Any]]
+        ],
+    ) -> str:
         if isinstance(prefix, str):
             return prefix
         elif isinstance(prefix, list):
@@ -360,11 +472,12 @@ class CommandsClient(voltage.Client):
             The path to the extension as a python dotpath.
         """
         module = import_module(path)
-        cog = module.setup(self, *args, **kwargs)
-        self.extensions[path] = (module, cog.name)
+        self.extensions[path] = module
         if not hasattr(module, "setup"):
-            raise AttributeError("Extension {} does not have a setup function.".format(path))
-        self.add_cog(cog)
+            raise AttributeError(
+                "Extension {} does not have a setup function.".format(path)
+            )
+        self.add_cog(module.setup(self, *args, **kwargs))
 
     def reload_extension(self, path: str):
         """
@@ -375,8 +488,18 @@ class CommandsClient(voltage.Client):
         path: :class:`str`
             The path to the extension as a python dotpath.
         """
-        self.remove_extension(path)
-        self.add_extension(path)
+        module = self.extensions.get(path)
+        if module is None:
+            raise KeyError("Extension {} does not exist.".format(path))
+        reload(module)
+        for i in self.commands:
+            if self.commands[i].cog == module:
+                self.commands.pop(i)
+        if not hasattr(module, "setup"):
+            raise AttributeError(
+                "Extension {} does not have a setup function.".format(path)
+            )
+        self.add_cog(module.setup(self))
 
     def remove_extension(self, path: str):
         """
@@ -387,20 +510,21 @@ class CommandsClient(voltage.Client):
         path: :class:`str`
             The path to the extension as a python dotpath.
         """
-        if not path in self.extensions:
+        module = self.extensions.get(path)
+        if module is None:
             raise KeyError("Extension {} does not exist.".format(path))
-        module = self.extensions.pop(path)
-        items = list(self.commands.items())
-        for name, command in items:
-            if command.cog:
-                if command.cog.name == module[1]:
-                    cmd = self.commands.pop(name)
-                    del cmd
-        cog = self.cogs.pop(module[1])
-        del cog
-        del module
+        for i in self.commands:
+            if self.commands[i].cog == module:
+                self.commands.pop(i)
+        self.cogs.pop(module.name)
+        self.extensions.pop(path)
 
-    def command(self, name: Optional[str] = None, description: Optional[str] = None, aliases: Optional[list[str]] = None):
+    def command(
+        self,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        aliases: Optional[list[str]] = None,
+    ):
         """
         A decorator for adding commands to the client.
 
@@ -413,24 +537,31 @@ class CommandsClient(voltage.Client):
         aliases: Optional[List[:class:`str`]]
             The aliases of the command.
         """
+
         def decorator(func: Callable[..., Awaitable[Any]]):
             command = Command(func, name, description, aliases)
             self.add_command(command)
             return command
+
         return decorator
 
     async def handle_commands(self, message: voltage.Message):
         prefix = await self.get_prefix(message, self.prefix)
         if message.content.startswith(prefix):
-            content = message.content[len(prefix):]
+            content = message.content[len(prefix) :]
             command = content.split(" ")[0]
-            if not command:
-                return
             if command in self.commands:
                 if "command" in self.error_handlers:
                     try:
-                        return await self.commands[command].invoke(CommandContext(message, self.commands[command], self), prefix)
+                        return await self.commands[command].invoke(
+                            CommandContext(message, self.commands[command], self),
+                            prefix,
+                        )
                     except Exception as e:
-                        return await self.error_handlers["command"](e, CommandContext(message, self.commands[command], self))
-                return await self.commands[command].invoke(CommandContext(message, self.commands[command], self), prefix)
+                        return await self.error_handlers["command"](
+                            e, CommandContext(message, self.commands[command], self)
+                        )
+                return await self.commands[command].invoke(
+                    CommandContext(message, self.commands[command], self), prefix
+                )
             raise CommandNotFound(command)
