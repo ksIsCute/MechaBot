@@ -22,11 +22,15 @@ async def status():
     statuses = [
       f"Playing with {len(bot.cache.servers)} servers and {len(bot.members)} users!",
       f"Watching {len(bot.members)} users!",
+      f"Spying {len(bot.members)} users!",
+      f"Playing with my dick and spying{len(bot.cache.servers)} servers and {len(bot.members)} users!",
       f"My waifu is better than yours!!! | {len(bot.cache.servers)} servers",
       f"Jan | {len(bot.cache.servers)} servers",
+      f"Visit www.redgifs.com for cute cat pics! | {len(bot.cache.servers)} servers",
       f"guys my father just came back with the milk O_O - delta2571 | {len(bot.cache.servers)} servers",
       f"Revolt > shitcord | {len(bot.cache.servers)} servers",
       f"Jans Onlyfans: onlyfans.com/linustechtips | {len(bot.cache.servers)} servers"
+      f"Proudly running on Ubuntu Server linux! | {len(bot.cache.servers)} servers",
     ]
     status = random.choice(statuses)
     await bot.set_status(status, voltage.PresenceType.online)
