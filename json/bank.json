@@ -1,16 +1,17 @@
 {
   "01FZB2QAPRVT8PVMF11480GRCD": {
     "username": "css",
-    "coins": 1276,
+    "coins": 8957,
     "items": [
-      "Resume"
+      "Resume",
+      "Playboy"
     ],
     "pcoins": 0,
-    "job": "Unemployed"
+    "job": "Teacher"
   },
   "01FWXJEHNR87E0HXDMSMDZ7ZAW": {
     "username": "McInooted_",
-    "coins": 16281,
+    "coins": 18813,
     "items": [],
     "pcoins": 0,
     "job": "Unemployed"
@@ -26,9 +27,11 @@
   },
   "01FVB1ZGCPS8TJ4PD4P7NAFDZA": {
     "username": "1malan",
-    "coins": 3751,
-    "items": [],
+    "coins": 10569,
+    "items": [
+      "Resume"
+    ],
     "pcoins": 0,
-    "job": "Unemployed"
+    "job": "Teacher"
   }
 }

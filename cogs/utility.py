@@ -2,15 +2,15 @@ import voltage, asyncio
 import time, aiohttp, json, re
 import datetime, psutil, random
 from datetime import timedelta
-from utils import Cog
+from voltage.ext import commands
 from mcstatus import JavaServer
 
 starttime = time.time()
+version = "1.1.2"
 
+def setup(client) -> commands.Cog:
 
-def setup(client) -> Cog:
-
-    util = Cog("Utility", "Check out some epic utility commands!")
+    util = commands.Cog("Utility", "Check out some epic utility commands!")
 
     @util.command(description="Get basic information on a server!")
     async def serverinfo(ctx):
@@ -146,7 +146,7 @@ def setup(client) -> Cog:
     async def stats(ctx):
         embed = voltage.SendableEmbed(
             title="Mecha's Stats:",
-            description=f"**Servers:**\n`{len(client.cache.servers)}`\n**Members:**\n`{len(client.members)}`\n**Version:**\n*V1.0.7*\n",
+            description=f"**Servers:**\n`{len(client.cache.servers)}`\n**Members:**\n`{len(client.members)}`\n**Version:**\n*{version}*\n",
             colour="#516BF2",
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
