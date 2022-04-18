@@ -117,6 +117,7 @@ Playboy Magazine - `1000`
 Resume - `250`
         
 """)
+      return await ctx.send(content="[]()", embed=embed)
     else:
       with open("json/bank.json", "r") as f:
         data = json.load(f)
@@ -142,6 +143,5 @@ Resume - `250`
             data[ctx.author.id]['items'].append("Playboy")
             json.dump(data, f, indent=2)
           return await ctx.send("You bought a `Playboy Magazine` for `1000` coins!")
-    await ctx.send(content="[]()", embed=embed)
     
   return eco
