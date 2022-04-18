@@ -41,11 +41,11 @@ async def on_message(message):
     with open("json/users.json", "r") as f:
         data = json.load(f)
     if message.author.id in data:
-        pass
+      pass
     else:
-        if message.author.id in data:
+        if message.author.id not in data:
             with open("json/users.json", "w") as f:
-                data[message.author.id] = {
+              data[message.author.id] = {
                     "username": message.author.name,
                     "id": message.author.id,
                     "bio": "User has no bio set!",
@@ -53,7 +53,7 @@ async def on_message(message):
                     "ff": "False",
                     "notifications": [],
                 }
-            json.dump(data, f, indent=2)
+              json.dump(data, f, indent=2)
     with open("prefixes.json", "r") as f:
         prefixes = json.load(f)
         prefix = prefixes.get(str(message.server.id))
@@ -63,10 +63,10 @@ async def on_message(message):
         )
     elif message.content.startswith(prefix) is True:
         if message.author.bot is False:
-            pass
+          pass
         else:
             with open("json/users.json", "r") as f:
-                data = json.load(f)
+              data = json.load(f)
             if message.author.id in data:
                 with open("json/users.json", "w") as f:
                     data[message.author.id] = {
