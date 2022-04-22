@@ -1,16 +1,16 @@
-import voltage, asyncio
+import voltage, asyncio, random
 import time, aiohttp, json, re
 import datetime, psutil, random
 from datetime import timedelta
-from utils import Cog
+from voltage.ext import commands
 from mcstatus import JavaServer
 
 starttime = time.time()
+version = "1.1.2"
 
+def setup(client) -> commands.Cog:
 
-def setup(client) -> Cog:
-
-    util = Cog("Utility", "Check out some epic utility commands!")
+    util = commands.Cog("Utility", "Check out some epic utility commands!")
 
     @util.command(description="Get basic information on a server!")
     async def serverinfo(ctx):
@@ -94,7 +94,13 @@ def setup(client) -> Cog:
             )
             await ctx.send(content="[]()", embed=embed)
 
-    @util.command(description="Get the color of a hex code as an image!")
+    @util.command(description="Get a random color!", aliases=["colour", "color"])
+    async def color(ctx):
+        chosen = "#%06x" % random.randint(0, 0xFFFFFF)
+        print(chosen)
+        await ctx.send(f"[](https://some-random-api.ml/canvas/colorviewer?hex={chosen})")
+        
+    @util.command(description="Get the color of a hex code as an image!", aliases=["view", "viewcolor", "gc", "getcolour", "getcolor", "viewcolour"])
     async def gc(ctx, hex):
         embed = voltage.SendableEmbed(
             title="Got it!",
@@ -146,7 +152,7 @@ def setup(client) -> Cog:
     async def stats(ctx):
         embed = voltage.SendableEmbed(
             title="Mecha's Stats:",
-            description=f"**Servers:**\n`{len(client.cache.servers)}`\n**Members:**\n`{len(client.members)}`\n**Version:**\n*V1.0.7*\n",
+            description=f"**Servers:**\n`{len(client.cache.servers)}`\n**Members:**\n`{len(client.members)}`\n**Version:**\n*{version}*\n",
             colour="#516BF2",
         )
         await ctx.send(content=ctx.author.mention, embed=embed)

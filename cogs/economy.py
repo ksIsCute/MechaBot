@@ -1,10 +1,10 @@
 import voltage, json, random
-from utils import Cog
+from voltage.ext import commands
 
 
-def setup(client) -> Cog:
+def setup(client) -> commands.Cog:
 
-  eco = Cog("Economy", "Wanna get rich! TOO BAD.")
+  eco = commands.Cog("Economy", "Wanna get rich! TOO BAD.")
   @eco.command()
   async def bal(ctx):
     with open("json/bank.json", "r") as f:
@@ -71,7 +71,7 @@ def setup(client) -> Cog:
       )
       return await ctx.send(content="[]()", embed=embed)
 
-  @eco.command(description="Go to work u bum")
+  @eco.command(description="Go to work u bum **requires Resume**")
   async def work(ctx):
     amount = random.randint(500, 1000)
     with open("json/bank.json", "r") as f:
@@ -81,17 +81,21 @@ def setup(client) -> Cog:
       with open("json/bank.json", "w") as f:
         json.dump(data, f, indent=2)
       return await ctx.send("You dont have a bank account registered in our database!")
-    embed = voltage.SendableEmbed(
-      title = ctx.author.display_name,
-      icon_url = ctx.author.display_avatar.url,
-      description=f"You worked as a {data[ctx.author.id]['job']} and made `{amount}`!",
-      color="#00FF00"
-    )
-    await ctx.send(content="[]()", embed=embed)
-    with open("json/bank.json", "w") as f:
-      data[ctx.author.id]['coins'] += amount
-      json.dump(data, f, indent=2)
-
+    elif data[ctx.author.id]['job'] == 'Unemployed':
+      return await ctx.send("You're unemployed, get a job u bum!")
+    elif 'Resume' in data[ctx.author.id]['items']:
+      embed = voltage.SendableEmbed(
+        title = ctx.author.display_name,
+        icon_url = ctx.author.display_avatar.url,
+        description=f"You worked as a {data[ctx.author.id]['job']} and made `{amount}`!",
+        color="#00FF00"
+      )
+      await ctx.send(content="[]()", embed=embed)
+      with open("json/bank.json", "w") as f:
+        data[ctx.author.id]['coins'] += amount
+        json.dump(data, f, indent=2)
+    else:
+      return await ctx.send("You need a `resume` to work, your not workin' here bub.")
   @eco.command(aliases=["lb", "leaderboard", "ranking"])
   async def leaderboard(ctx):
     with open("json/bank.json", "r") as f:
@@ -104,6 +108,45 @@ def setup(client) -> Cog:
     print(em)
     await ctx.send("this is coming soon i have no idea how to make this work :) :boohoo:")
 
+  @eco.command(aliases=["apply", "getjob", "joblist", "gj", "job", "workas", "howjob"])
+  async def job(ctx, job=None):
+    if job is None:
+      embed = voltage.SendableEmbed(
+        title = ctx.author.display_name,
+        icon_url = ctx.author.display_avatar.url,
+        description="""
+**Available Jobs:**
+
+> Teacher
+> Twitch Streamer
+> Youtuber
+> Revolt Mod
+> Developer
+> Porn Star
+        
+"""
+      )
+      return await ctx.send(content="[]()", embed=embed)
+    with open("json/bank.json", "r") as f:
+      data = json.load(f)
+    if "Unemployed" == data[ctx.author.id]['job']:
+      if "Resume" in data[ctx.author.id]['items']:
+        if job.lower() in ["teacher", "twitch streamer", "youtuber", "revolt mod", "developer", "porn star"]:
+          if job.lower() == "revolt mod":
+            job = "Revolt Mod"
+          elif job.lower() == "twitch streamer":
+            job = "Twitch Streamer"
+          elif job.lower() == "porn star":
+            job = "Porn Star"
+          with open("json/bank.json", "w") as f:
+            data[ctx.author.id]['job'] = job.capitalize()
+            json.dump(data, f, indent=2)
+          return await ctx.send(f"You are now working as a `{job.capitalize()}`!")
+      elif "Resume" not in data[ctx.author.id]['items']:
+        return await ctx.send("You need a resume to get a job! Buy a resume!")
+    else:
+      return await ctx.send("You already have a job!")
+  
   @eco.command(aliases=["shop", "buy"])
   async def shop(ctx, item=None):
     if item is None:
@@ -117,6 +160,7 @@ Playboy Magazine - `1000`
 Resume - `250`
         
 """)
+      return await ctx.send(content="[]()", embed=embed)
     else:
       with open("json/bank.json", "r") as f:
         data = json.load(f)
@@ -142,6 +186,5 @@ Resume - `250`
             data[ctx.author.id]['items'].append("Playboy")
             json.dump(data, f, indent=2)
           return await ctx.send("You bought a `Playboy Magazine` for `1000` coins!")
-    await ctx.send(content="[]()", embed=embed)
     
   return eco

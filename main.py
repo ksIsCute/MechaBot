@@ -1,24 +1,45 @@
 import voltage, json, asyncio
 import os, random
-from utils import CommandsClient, CommandNotFound, NotEnoughArgs
+from voltage.ext import commands
+from voltage import CommandNotFound, NotEnoughArgs, NotEnoughPerms, NotBotOwner, NotFoundException
 from host import alive
 
-
 async def get_prefix(message, client):
-    with open("prefixes.json", "r") as f:
-        prefixes = json.load(f)
-    if message.server is None:
-        return
-    elif str(message.server.id) not in prefixes:
-        with open("prefixes.json", "w") as f:
-            prefixes[str(message.server.id)] = "m!"
-            json.dump(prefixes, f, indent=2)
-    else:
-        return prefixes.get(str(message.server.id), "m!")
+  with open("prefixes.json", "r") as f:
+    prefixes = json.load(f)
+  if message.server is None:
+    return "m!"
+  elif str(message.server.id) not in prefixes:
+    with open("prefixes.json", "w") as f:
+      prefixes[str(message.server.id)] = "m!"
+      json.dump(prefixes, f, indent=2)
+    return "m!"
+  else:
+    return prefixes.get(str(message.server.id), "m!")
 
 
-bot = CommandsClient(get_prefix)
+class MyHelpCommand(commands.HelpCommand):
+    async def send_help(self, ctx: commands.CommandContext):
+        embed = voltage.SendableEmbed(
+            title="Help",
+            description=f"Use `{ctx.prefix}help <command>` to get help for a command.",
+            colour="#516BF2",
+            icon_url=ctx.author.display_avatar.url
+        )
+        text = "\n### **No Category**\n"
+        for command in self.client.commands.values():
+            if command.cog is None:
+                text += f"> {command.name}\n"
+        for i in self.client.cogs.values():
+            text += f"\n### **{i.name}**\n{i.description}\n"
+            for j in i.commands:
+                text += f"\n> {j.name}"
+        if embed.description:
+            embed.description += text
+        return await ctx.reply(f"[]({ctx.author.id})", embed=embed)
 
+
+bot = commands.CommandsClient(get_prefix, help_command=MyHelpCommand)
 
 async def status():
     for i in range(1, 10000):
@@ -38,10 +59,18 @@ async def status():
 
 @bot.listen("message")
 async def on_message(message):
+    with open("prefixes.json", "r") as g:
+        prefixes = json.load(g)
+    if message.server.id not in prefixes:
+        with open("prefixes.json", "w") as g:
+            prefixes[message.server.id] = "m!"
+            json.dump(prefixes, g, indent=2)
     with open("json/users.json", "r") as f:
         data = json.load(f)
     if message.author.id in data:
       pass
+    elif message.server.id in prefixes:
+        pass
     else:
         if message.author.id not in data:
             with open("json/users.json", "w") as f:
@@ -109,7 +138,7 @@ async def server_added(server):
     embed = voltage.SendableEmbed(
         title="New Server alert!",
         description=f"## Just Joined a new server!\nNow at **{len(bot.servers)}** servers!",
-        color="#00FF00",
+        color="#516BF2",
     )
     await channel.send(content="[]()", embed=embed)
 
@@ -117,11 +146,7 @@ async def server_added(server):
 @bot.listen("member_join")
 async def member_join(member):
     if str(member.server.id) == "01FZB38TYPX73VSWFMMJTZE8C5":
-        for role in member.server.roles:
-            if role.name.lower() == "member":
-                return await member.add_roles(role)
-            else:
-                pass
+        print(f"{member} just joined!")
     else:
         return
 
@@ -203,7 +228,7 @@ async def on_message_error(error: Exception, message):
             media="https://i.imgur.com/IqqnqmF.png",
         )
         return await message.reply(message.author.mention, embed=embed)
-    else:
+    elif isinstance(error, NotFoundException):
         errormsg = [
             "Error! Error!",
             "LOOK OUT!!! ERROR!!",
@@ -219,7 +244,49 @@ async def on_message_error(error: Exception, message):
         ]
         embed = voltage.SendableEmbed(
             title=random.choice(errormsg),
-            description=Exception,
+            description=error,
+            colour="#516BF2",
+            media="https://i.imgur.com/T3YNsY1.png",
+        )
+        return await message.reply(message.author.mention, embed=embed)
+    elif isinstance(error, NotEnoughPerms):
+        errormsg = [
+            "Error! Error!",
+            "LOOK OUT!!! ERROR!!",
+            "Whoops!",
+            "Oopsie!",
+            "Something went wrong!",
+            "Something happened..",
+            "What happened? I know!",
+            "404!",
+            "ERROR.. ERROR..",
+            "Error Occured!",
+            "An Error Occured!",
+        ]
+        embed = voltage.SendableEmbed(
+            title=random.choice(errormsg),
+            description=error,
+            colour="#516BF2",
+            media="https://i.imgur.com/T3YNsY1.png",
+        )
+        return await message.reply(message.author.mention, embed=embed)
+    elif isinstance(error, NotBotOwner):
+        errormsg = [
+            "Error! Error!",
+            "LOOK OUT!!! ERROR!!",
+            "Whoops!",
+            "Oopsie!",
+            "Something went wrong!",
+            "Something happened..",
+            "What happened? I know!",
+            "404!",
+            "ERROR.. ERROR..",
+            "Error Occured!",
+            "An Error Occured!",
+        ]
+        embed = voltage.SendableEmbed(
+            title=random.choice(errormsg),
+            description="You dont own me! You cant use my owner only commands!",
             colour="#516BF2",
             media="https://i.imgur.com/T3YNsY1.png",
         )

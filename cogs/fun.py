@@ -1,10 +1,10 @@
 import voltage, json, requests, aiohttp, random
-from utils import Cog
+from voltage.ext import commands
 
 
-def setup(client) -> Cog:
+def setup(client) -> commands.Cog:
 
-    fun = Cog("Fun", "Have some fun and play around with Mechas Commands!")
+    fun = commands.Cog("Fun", "Have some fun and play around with Mechas Commands!")
 
     @fun.command(
         description="Give someone a pat!",
@@ -171,7 +171,7 @@ def setup(client) -> Cog:
 
     @fun.command(
         description="Get some cute fox pics!",
-        aliases=["foxies", "foxs", "foxes", "foxypic", "foxpic", "catpicture", "fox"],
+        aliases=["foxies", "foxs", "foxes", "foxypic", "foxpic", "foxpicture", "fox"],
     )
     async def fox(ctx):
         async with aiohttp.ClientSession() as session:

@@ -1,10 +1,10 @@
 import voltage, asyncio, json, datetime, time
-from utils import Cog
+from voltage.ext import commands
 
 
-def setup(client) -> Cog:
+def setup(client) -> commands.Cog:
 
-    owner = Cog("Owner", "For the cool kids only! (used to test commands mostly)")
+    owner = commands.Cog("Owner", "For the cool kids only! (used to test commands mostly)")
 
     @owner.command(name="eval", description="Run commands in multiple languages!")
     async def eval_fn(ctx, *, code):
