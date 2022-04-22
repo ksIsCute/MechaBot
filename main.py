@@ -8,16 +8,38 @@ async def get_prefix(message, client):
   with open("prefixes.json", "r") as f:
     prefixes = json.load(f)
   if message.server is None:
-    return
+    return "m!"
   elif str(message.server.id) not in prefixes:
     with open("prefixes.json", "w") as f:
       prefixes[str(message.server.id)] = "m!"
       json.dump(prefixes, f, indent=2)
+    return "m!"
   else:
     return prefixes.get(str(message.server.id), "m!")
 
 
-bot = commands.CommandsClient(get_prefix)
+class MyHelpCommand(commands.HelpCommand):
+    async def send_help(self, ctx: commands.CommandContext):
+        embed = voltage.SendableEmbed(
+            title="Help",
+            description=f"Use `{ctx.prefix}help <command>` to get help for a command.",
+            colour="#516BF2",
+            icon_url=ctx.author.display_avatar.url
+        )
+        text = "\n### **No Category**\n"
+        for command in self.client.commands.values():
+            if command.cog is None:
+                text += f"> {command.name}\n"
+        for i in self.client.cogs.values():
+            text += f"\n### **{i.name}**\n{i.description}\n"
+            for j in i.commands:
+                text += f"\n> {j.name}"
+        if embed.description:
+            embed.description += text
+        return await ctx.reply(f"[]({ctx.author.id})", embed=embed)
+
+
+bot = commands.CommandsClient(get_prefix, help_command=MyHelpCommand)
 
 async def status():
     for i in range(1, 10000):
@@ -37,10 +59,18 @@ async def status():
 
 @bot.listen("message")
 async def on_message(message):
+    with open("prefixes.json", "r") as g:
+        prefixes = json.load(g)
+    if message.server.id not in prefixes:
+        with open("prefixes.json", "w") as g:
+            prefixes[message.server.id] = "m!"
+            json.dump(prefixes, g, indent=2)
     with open("json/users.json", "r") as f:
         data = json.load(f)
     if message.author.id in data:
       pass
+    elif message.server.id in prefixes:
+        pass
     else:
         if message.author.id not in data:
             with open("json/users.json", "w") as f:
@@ -108,7 +138,7 @@ async def server_added(server):
     embed = voltage.SendableEmbed(
         title="New Server alert!",
         description=f"## Just Joined a new server!\nNow at **{len(bot.servers)}** servers!",
-        color="#00FF00",
+        color="#516BF2",
     )
     await channel.send(content="[]()", embed=embed)
 

@@ -1,4 +1,4 @@
-import voltage, asyncio
+import voltage, asyncio, random
 import time, aiohttp, json, re
 import datetime, psutil, random
 from datetime import timedelta
@@ -94,7 +94,13 @@ def setup(client) -> commands.Cog:
             )
             await ctx.send(content="[]()", embed=embed)
 
-    @util.command(description="Get the color of a hex code as an image!")
+    @util.command(description="Get a random color!", aliases=["colour", "color"])
+    async def color(ctx):
+        chosen = "#%06x" % random.randint(0, 0xFFFFFF)
+        print(chosen)
+        await ctx.send(f"[](https://some-random-api.ml/canvas/colorviewer?hex={chosen})")
+        
+    @util.command(description="Get the color of a hex code as an image!", aliases=["view", "viewcolor", "gc", "getcolour", "getcolor", "viewcolour"])
     async def gc(ctx, hex):
         embed = voltage.SendableEmbed(
             title="Got it!",
