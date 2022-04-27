@@ -22,11 +22,11 @@ class MyHelpCommand(commands.HelpCommand):
     async def send_help(self, ctx: commands.CommandContext):
         embed = voltage.SendableEmbed(
             title="Help",
-            description=f"Use `{ctx.prefix}help <command>` to get help for a command.",
+            description=f"Use `{ctx.prefix}help <command>` to get help for any of our {len(ctx.client.commands)} commands.",
             colour="#516BF2",
             icon_url=ctx.author.display_avatar.url
         )
-        text = "\n### **No Category**\n"
+        text = "\n### **Other Commands**\n"
         for command in self.client.commands.values():
             if command.cog is None:
                 text += f"> {command.name}\n"
@@ -51,6 +51,8 @@ async def status():
             f"guys my father just came back with the milk O_O - delta2571 | {len(bot.cache.servers)} servers",
             f"Revolt > shitcord | {len(bot.cache.servers)} servers",
             f"Jans Onlyfans: onlyfans.com/linustechtips | {len(bot.cache.servers)} servers",
+            f"add automod instead | {len(bot.cache.servers)} servers",
+            f":trol: | {len(bot.cache.servers)} servers"
         ]
         status = random.choice(statuses)
         await bot.set_status(status, voltage.PresenceType.online)
@@ -67,10 +69,13 @@ async def on_message(message):
             json.dump(prefixes, g, indent=2)
     with open("json/users.json", "r") as f:
         data = json.load(f)
+        await bot.handle_commands(message)
     if message.author.id in data:
+      await bot.handle_commands(message)
       pass
     elif message.server.id in prefixes:
-        pass
+      await bot.handle_commands(message)
+      pass
     else:
         if message.author.id not in data:
             with open("json/users.json", "w") as f:
@@ -87,11 +92,13 @@ async def on_message(message):
         prefixes = json.load(f)
         prefix = prefixes.get(str(message.server.id))
     if message.content == "<@01FZB4GBHDVYY6KT8JH4RBX4KR>":
-        await message.channel.send(
-            f"Pong, {message.author.mention}! My prefix for this server is `{prefix}`"
+        await message.reply(
+            f"Pong! My prefix for this server is `{prefix}`"
         )
+        await bot.handle_commands(message)
     elif message.content.startswith(prefix) is True:
         if message.author.bot is False:
+          await bot.handle_commands(message)
           pass
         else:
             with open("json/users.json", "r") as f:
@@ -107,7 +114,7 @@ async def on_message(message):
                         "notifications": [],
                     }
                 json.dump(data, f, indent=2)
-            return
+            return await bot.handle_commands(message)
     await bot.handle_commands(message)
 
 
@@ -161,27 +168,6 @@ async def on_ready():
             except Exception as e:
                 print(e)
     await status()
-
-
-@bot.command(description="Get some support!")
-async def support(ctx):
-    embed = voltage.SendableEmbed(
-        title="Need Help? Found a Bug? Want to see a feature implimented? All of the above?",
-        description="Tell us at [Our Website](https://mechabot.tk/) or join us in [Our Server](https://app.revolt.chat/invite/hqSq0yZh)!",
-        colour="#516BF2",
-        media="https://i.imgur.com/3DQ7a6I.jpg",
-    )
-    await ctx.send(content=ctx.author.mention, embed=embed)
-
-
-@bot.command(description="Get a users avatar!")
-async def avatar(ctx, member: voltage.Member):
-    embed = voltage.SendableEmbed(
-        title=f"{member.display_name}'s avatar!",
-        media=member.display_avatar.url,
-        colour="#516BF2",
-    )
-    await ctx.send(content=ctx.author.mention, embed=embed)
 
 
 @bot.error("message")

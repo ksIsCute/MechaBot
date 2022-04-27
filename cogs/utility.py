@@ -148,6 +148,15 @@ def setup(client) -> commands.Cog:
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
+    @util.command(description="Get a users avatar!")
+    async def avatar(ctx, member: voltage.Member):
+        embed = voltage.SendableEmbed(
+            title=f"{member.display_name}'s avatar!",
+            media=member.display_avatar.url,
+            colour="#516BF2",
+        )
+        await ctx.send(content=ctx.author.mention, embed=embed)
+  
     @util.command()
     async def stats(ctx):
         embed = voltage.SendableEmbed(
