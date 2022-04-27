@@ -2,45 +2,48 @@ import voltage, asyncio, json, datetime, time
 from voltage.ext import commands
 
 
-def setup(client) -> commands.Cog:
+class owner(commands.Cog):
 
-    owner = commands.Cog("Owner", "For the cool kids only! (used to test commands mostly)")
+    def __init__(self, client):
+        self.client = client
+        self.name = "Owner"
+        self.description = "For the cool kids only! (just to test commands ignore most of these u probably cant use them)"
 
-    @owner.command(description="Change the presence or status of Mecha!")
-    async def status(ctx, *, status, presence=None):
+    @commands.command(description="Change the presence or status of Mecha!")
+    async def status(self, ctx, *, status, presence=None):
         if ctx.author.id in [
             "01FZB2QAPRVT8PVMF11480GRCD",
             "01FZBQCQPT53YTAD86T28WV69X",
         ]:
             if not presence:
-                await client.set_status(status, voltage.PresenceType.online)
+                await self.client.set_status(status, voltage.PresenceType.online)
                 return await ctx.send(f"Changed status to `{status}`")
             else:
                 if presence.lower() == "online":
-                    await client.set_status(status, voltage.PresenceType.online)
+                    await self.client.set_status(status, voltage.PresenceType.online)
                     return await ctx.send(
                         f"Changed status to `{status}` and a presence of `Online!`"
                     )
                 elif presence.lower() == "idle":
-                    await client.set_status(status, voltage.PresenceType.idle)
+                    await self.client.set_status(status, voltage.PresenceType.idle)
                     return await ctx.send(
                         f"Changed status to `{status}` and a presence of `Idle`!"
                     )
                 elif presence.lower() == "dnd" or "busy":
-                    await client.set_status(status, voltage.PresenceType.busy)
+                    await self.client.set_status(status, voltage.PresenceType.busy)
                     return await ctx.send(
                         f"Changed status to `{status}` and a presence of `Do Not Disturb`!"
                     )
         else:
             return await ctx.send("You aren't an owner of this bot!")
 
-    @owner.command()
-    async def test(ctx):
+    @commands.command()
+    async def test(self, ctx):
         embed = voltage.ImageEmbed(url="https://i.imgur.com/2LNlDQW.jpg")
         await ctx.send(content="[]()", embed=embed)
 
-    @owner.command(description="Test our command")
-    async def register(ctx):
+    @commands.command(description="Test our command")
+    async def register(self, ctx):
 
         with open("json/users.json", "r") as f:
             data = json.load(f)
@@ -59,8 +62,8 @@ def setup(client) -> commands.Cog:
         embed = voltage.SendableEmbed(description="## You're registered!")
         await ctx.send(content="[]()", embed=embed)
 
-    @owner.command(description="Send a notification to every user registered!")
-    async def notify(ctx, *, message):
+    @commands.command(description="Send a notification to every user registered!")
+    async def notify(self, ctx, *, message):
         if ctx.author.id == "01FZB2QAPRVT8PVMF11480GRCD":
             with open("json/users.json", "r") as f:
                 data = json.load(f)
@@ -75,8 +78,8 @@ def setup(client) -> commands.Cog:
         else:
             return await ctx.send("You aren't an owner! You can't use this command!")
 
-    @owner.command(description="Use this after registering")
-    async def ar(ctx):
+    @commands.command(description="Use this after registering")
+    async def ar(self, ctx):
         with open("json/users.json", "r") as f:
             data = json.load(f)
         embed = voltage.SendableEmbed(
@@ -84,4 +87,5 @@ def setup(client) -> commands.Cog:
         )
         await ctx.send(content="[]()", embed=embed)
 
-    return owner
+def setup(client) -> commands.Cog:
+  return owner(client)

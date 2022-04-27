@@ -13,7 +13,6 @@ async def get_prefix(message, client):
     with open("prefixes.json", "w") as f:
       prefixes[str(message.server.id)] = "m!"
       json.dump(prefixes, f, indent=2)
-    return "m!"
   else:
     return prefixes.get(str(message.server.id), "m!")
 
@@ -39,7 +38,7 @@ class MyHelpCommand(commands.HelpCommand):
         return await ctx.reply(f"[]({ctx.author.id})", embed=embed)
 
 
-bot = commands.CommandsClient(get_prefix, help_command=MyHelpCommand)
+bot = commands.CommandsClient(prefix=[get_prefix, "m!"], help_command=MyHelpCommand)
 
 async def status():
     for i in range(1, 10000):

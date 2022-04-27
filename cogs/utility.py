@@ -8,12 +8,17 @@ from mcstatus import JavaServer
 starttime = time.time()
 version = "1.1.2"
 
-def setup(client) -> commands.Cog:
+class utility(commands.Cog):
 
-    util = commands.Cog("Utility", "Check out some epic utility commands!")
+    def __init__(self, client):
+        self.client = client
 
-    @util.command(description="Get basic information on a server!")
-    async def serverinfo(ctx):
+        # Setting the name and description manually
+        self.name = "Utility"
+        self.description = "Customize your experience with mecha!"
+
+    @commands.command(description="Get basic information on a server!")
+    async def serverinfo(self, ctx):
         with open("json/servers.json", "r") as f:
             data = json.load(f)
         if ctx.server.id not in data:
@@ -61,10 +66,10 @@ def setup(client) -> commands.Cog:
             )
             await ctx.send(content="[]()", embed=embed)
 
-    @util.command(
+    @commands.command(
         description="Removes some of the nsfw commands and makes Mecha family friendly PG clean"
     )
-    async def ff(ctx, arg):
+    async def ff(self, ctx, arg):
         if arg.lower() in ["yes", "on", "activated", "y", "online", "true"]:
             with open("json/users.json", "r") as f:
                 data = json.load(f)
@@ -94,14 +99,14 @@ def setup(client) -> commands.Cog:
             )
             await ctx.send(content="[]()", embed=embed)
 
-    @util.command(description="Get a random color!", aliases=["colour", "color"])
-    async def color(ctx):
+    @commands.command(description="Get a random color!", aliases=["colour", "color"])
+    async def color(self, ctx):
         chosen = "#%06x" % random.randint(0, 0xFFFFFF)
         print(chosen)
         await ctx.send(f"[](https://some-random-api.ml/canvas/colorviewer?hex={chosen})")
         
-    @util.command(description="Get the color of a hex code as an image!", aliases=["view", "viewcolor", "gc", "getcolour", "getcolor", "viewcolour"])
-    async def gc(ctx, hex):
+    @commands.command(description="Get the color of a hex code as an image!", aliases=["view", "viewcolor", "gc", "getcolour", "getcolor", "viewcolour"])
+    async def gc(self, ctx, hex):
         embed = voltage.SendableEmbed(
             title="Got it!",
             description=f"This is the color for your hex code: `{hex}`",
@@ -112,18 +117,18 @@ def setup(client) -> commands.Cog:
             embed=embed,
         )
 
-    @util.command(description="⏲️ | Get the amount of time Mecha has been online for!")
-    async def uptime(ctx):
+    @commands.command(description="⏲️ | Get the amount of time Mecha has been online for!")
+    async def uptime(self, ctx):
         uptime = str(datetime.timedelta(seconds=int(round(time.time() - starttime))))
         embed = voltage.SendableEmbed(
             title="Mecha's Uptime:", description=f"`{uptime}`", colour="#516BF2"
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @util.command(
+    @commands.command(
         description="🕒 | Set a reminder up to a month! (1d, 1h, 1m, 1s) 'm!reminder 10 'm' do the dishes'"
     )
-    async def reminder(ctx, time: int, timetype, *, reminder):
+    async def reminder(self, ctx, time: int, timetype, *, reminder):
         embed = voltage.SendableEmbed(
             description=f"Set a reminder: `{reminder}` in `{time}{timetype}`!",
             colour="#516BF2",
@@ -148,8 +153,8 @@ def setup(client) -> commands.Cog:
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @util.command(description="Get a users avatar!")
-    async def avatar(ctx, member: voltage.Member):
+    @commands.command(description="Get a users avatar!")
+    async def avatar(self, ctx, member: voltage.Member):
         embed = voltage.SendableEmbed(
             title=f"{member.display_name}'s avatar!",
             media=member.display_avatar.url,
@@ -157,17 +162,17 @@ def setup(client) -> commands.Cog:
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
   
-    @util.command()
-    async def stats(ctx):
+    @commands.command()
+    async def stats(self, ctx):
         embed = voltage.SendableEmbed(
             title="Mecha's Stats:",
-            description=f"**Servers:**\n`{len(client.cache.servers)}`\n**Members:**\n`{len(client.members)}`\n**Version:**\n*{version}*\n",
+            description=f"**Servers:**\n`{len(self.client.cache.servers)}`\n**Members:**\n`{len(self.client.members)}`\n**Version:**\n*{version}*\n",
             colour="#516BF2",
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @util.command()
-    async def ping(ctx):
+    @commands.command()
+    async def ping(self, ctx):
         cpu = psutil.cpu_percent()
         embed = voltage.SendableEmbed(
             title="Pong!",
@@ -182,8 +187,8 @@ def setup(client) -> commands.Cog:
         msg = await ctx.send(content=ctx.author.mention, embed=embed)
         await msg.edit(content=ctx.author.mention, embed=embed2)
 
-    @util.command(description="Get information on a minecraft server!")
-    async def mcserver(ctx, servername):
+    @commands.command(description="Get information on a minecraft server!")
+    async def mcserver(self, ctx, servername):
         server = JavaServer.lookup(str(servername))
         status = server.status()
         embed = voltage.SendableEmbed(
@@ -193,8 +198,8 @@ def setup(client) -> commands.Cog:
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @util.command(description="Get some information on a user!")
-    async def userinfo(ctx, user: voltage.User):
+    @commands.command(description="Get some information on a user!")
+    async def userinfo(self, ctx, user: voltage.User):
         if user.bot is False:
             embed = voltage.SendableEmbed(
                 title=user.display_name,
@@ -229,10 +234,10 @@ def setup(client) -> commands.Cog:
         else:
             return await ctx.send("Bot profiles coming soon")
 
-    @util.command(
+    @commands.command(
         aliases=["setbio", "sb", "bio", "changebio", "createbio", "cb", "sbio"]
     )
-    async def bio(ctx, *, bio: str):
+    async def bio(self, ctx, *, bio: str):
         if len(bio) > 250:
             return await ctx.send(
                 "Your bio is too looooooooooooooooooooooooooong! Make sure its under 250 characters!"
@@ -249,8 +254,8 @@ def setup(client) -> commands.Cog:
             f"Set your bio! Check it using `{prefix.get(str(ctx.server.id))}profile`!"
         )
 
-    @util.command(description="Check out a users profile or yours!")
-    async def profile(ctx, user: voltage.User = None):
+    @commands.command(description="Check out a users profile or yours!")
+    async def profile(self, ctx, user: voltage.User = None):
         if user is None:
             user = ctx.author
         with open("json/users.json", "r") as f:
@@ -279,10 +284,9 @@ def setup(client) -> commands.Cog:
                 f"{user.display_name}'s bio is unset! Tell them to set their bio using `{prefix.get(ctx.server.id)}bio`!"
             )
         await ctx.send(content="[]()", embed=embed)
-        # await ctx.send(content="Ok. Here!", embed=embed)
 
-    @util.command(description="Want to test commands and get a cool badge?")
-    async def beta(ctx, arg):
+    @commands.command(description="Want to test commands and get a cool badge?")
+    async def beta(self, ctx, arg):
         if arg.lower() in ["true", "yeah", "yes", "on", "enabled", "online"]:
             with open("json/users.json", "r") as f:
                 beta = json.load(f)
@@ -313,8 +317,8 @@ def setup(client) -> commands.Cog:
             return await ctx.send("You must turn `on` or `off` the beta feature!")
         await ctx.send(content="[]()", embed=embed)
 
-    @util.command(description="Beta testers only!")
-    async def testing(ctx):
+    @commands.command(description="Beta testers only!")
+    async def testing(self, ctx):
         with open("json/users.json", "r") as f:
             beta = json.load(f)
         if beta[ctx.author.id]["beta"] == "True":
@@ -324,8 +328,8 @@ def setup(client) -> commands.Cog:
                 "This command is for **beta testers** only! Use the `beta` command to register and come back!"
             )
 
-    @util.command(description="Check your notifications", aliases=["inbox", "notifications", "mynotifs", "notifs", "myinbox"])
-    async def inbox(ctx):
+    @commands.command(description="Check your notifications", aliases=["inbox", "notifications", "mynotifs", "notifs", "myinbox"])
+    async def inbox(self, ctx):
         with open("json/users.json", "r") as f:
             data = json.load(f)
         notificationlist = []
@@ -354,5 +358,6 @@ def setup(client) -> commands.Cog:
                 data[ctx.author.id]["notifications"].pop(0)
                 notificationlist.pop(0)
             json.dump(data, f, indent=2)
-    
-    return util
+          
+def setup(client) -> commands.Cog:
+    return utility(client)

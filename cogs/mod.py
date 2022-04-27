@@ -6,14 +6,16 @@ import datetime
 from datetime import timedelta
 from voltage.ext import commands
 
+class mod(commands.Cog):
 
-def setup(client) -> commands.Cog:
+    def __init__(self, client):
+      self.client = client
+      self.name = "Moderation"
+      self.description = "Lets do some moderating!"
 
-    mod = commands.Cog("Moderation", "Got moderation?")
-
-    @mod.command(description="BEGONE MESSAGES!")
+    @commands.command(description="BEGONE MESSAGES!")
     @commands.has_perms(manage_messages=True)
-    async def purge(ctx, amount: int) -> None:
+    async def purge(self, ctx, amount: int) -> None:
         starttime = time.time()
         await ctx.channel.purge(amount)
         embed = voltage.SendableEmbed(
@@ -22,12 +24,12 @@ def setup(client) -> commands.Cog:
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @mod.command(
+    @commands.command(
         description="Set a custom prefix for this server!",
         aliases=["setprefix", "prefix", "serverprefix", "p", "sp"],
     )
     @commands.has_perms(manage_server=True)
-    async def sp(ctx, prefix):
+    async def sp(self, ctx, prefix):
       with open("prefixes.json", "r") as f:
         prefixes = json.load(f)
       with open("prefixes.json", "w") as f:
@@ -40,9 +42,9 @@ def setup(client) -> commands.Cog:
         )
       return await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @mod.command(description="Ban a user from your server!")
+    @commands.command(description="Ban a user from your server!")
     @commands.has_perms(ban_members=True)
-    async def ban(ctx, member: voltage.Member):
+    async def ban(self, ctx, member: voltage.Member):
         if ctx.author.roles[0] > len(member.roles):
             return await ctx.send(
                 "That user is above your top role! I cannot ban them!"
@@ -66,8 +68,8 @@ def setup(client) -> commands.Cog:
         except Exception as e:
             await ctx.send(f"I was unable to ban {member}!\n```\n{e}\n```")
 
-    @mod.command(description="Kick a user from your server!")
-    async def kick(ctx, member: voltage.Member):
+    @commands.command(description="Kick a user from your server!")
+    async def kick(self, ctx, member: voltage.Member):
         if not ctx.author.permissions.kick_members:
             return await ctx.send(
                 "You don't have the required permission `kick_members` that is required for this command!"
@@ -99,4 +101,5 @@ def setup(client) -> commands.Cog:
         except Exception as e:
             await ctx.send(f"I was unable to kick {member}!\n```\n{e}\n```")
 
-    return mod
+def setup(client) -> commands.Cog:
+    return mod(client)

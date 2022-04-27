@@ -2,42 +2,49 @@ import voltage, json, random
 from voltage.ext import commands
 
 
-def setup(client) -> commands.Cog:
+class economy(commands.Cog):
 
-  eco = commands.Cog("Economy", "Wanna get rich! TOO BAD.")
-  @eco.command()
-  async def bal(ctx):
+  def __init__(self, client):
+    self.client = client
+
+    self.name = "Economy"
+    self.description = "Wanna get rich! TOO BAD."
+
+  @commands.command(aliases=["mymoney", "b", "money"])
+  async def bal(self, ctx, user: voltage.User=None):
+    if user is None:
+      user = ctx.author
     with open("json/bank.json", "r") as f:
       data = json.load(f)
-    if ctx.author.id not in data:
-      data[ctx.author.id] = {"username": ctx.author.name, "coins": 500, "items": [], "pcoins": 0, "job": "Unemployed"}
+    if user.id not in data:
+      data[user.id] = {"username": user.name, "coins": 500, "items": [], "pcoins": 0, "job": "Unemployed"}
       with open("json/bank.json", "w") as f:
         json.dump(data, f, indent=2)
       return await ctx.send("You dont have a bank account registered in our database!")
     items = 0
     try:
-      items = data[ctx.author.id]["items"]
+      items = data[user.id]["items"]
     except:
       items = 0
     if len(items) == 0:
       items = ["You have no items :boohoo:"]
     embed = voltage.SendableEmbed(
-      title = ctx.author.display_name,
-      icon_url = ctx.author.display_avatar.url,
+      title = user.display_name,
+      icon_url = user.display_avatar.url,
       description = f"""
-**Coins:** 
-> {data[ctx.author.id]["coins"]}
-
-**Prestige Coins:**
-> {data[ctx.author.id]["pcoins"]}
-
-**Inventory:**
-> {', '.join(items)}
-"""
+  **Coins:** 
+  > {data[user.id]["coins"]}
+  
+  **Prestige Coins:**
+  > {data[user.id]["pcoins"]}
+  
+  **Inventory:**
+  > {', '.join(items)}
+  """
     )
     return await ctx.send(content="[]()", embed=embed)
-
-  @eco.command(description="25% chance to get **nothing** and 75% to get up to 250 coins!")
+  
+  @commands.command(description="25% chance to get **nothing** and 75% to get up to 250 coins!")
   async def beg(ctx):
     amount = random.randint(1, 250)
     people = ["Jan From Revolt", "ks", "Cesiyi", "Fatal From Revolt", "Delta2571", "Rick Astley", "Shrek", "Jesus", "Dank Memer", "Mr Mosby", "Wendy", "Barry McKocner", "Jordan Peele", "Harry Balzac", "Kevin Hart", "Kim Jong Un", "Drake", "Kamala Harris", "Chris Peanuts", "A honey badger", "Revolt Dog", "Rihanna", "Mr. Clean", "Satan", "ayylien", "Selena Gomez", "Harry", "Elizabeth Warren", "Dawn Keebals", "Billie Eyelash", "Joe Montana", "Mr. Ja-cough", "Your step-sister", "Chuck Norris", "Your drunk self", "Dr. Phil", "Default Jonesy", "Cardi B", "Sans", "Peter Dinklage", "Nicki Minaj", "Dwight Shrute", "Timmy", "Demi Lovato", "Donald Glover", "That fart you've been holding in", "Paula Deen", "Lady Gaga", "Oprah", "Elon Musk", "Taylor Swift", "Melmsie's Beard", "Justin Bieber", "Toby Turner", "That girl whose bed you woke up in last night and you're too afraid to ask her name because you might come off as rude", "AirPod Jerk", "Your mom", "Mike Hoochie", "Mike Ock", "Spoopy Skelo", "Chungus", "Flo from Progressive", "That tiktok star that shows a little too much butt", "Sir Cole Jerkin", "T series", "Jennifer Lopez", "Barack Obama", "Cersei Lannister", "Carole Baskin", "Gordon Ramsay", "Thanos", "Emilia Clarke", "B Simpson", "Bongo cat", "Keanu Reeves", "Mr. Beast", "Annoying Ass Clown", "That lion from the kids movie that vaguely resembles the story of Jesus Christ", "That imposter who was too scared to murder you just because he didn't want to look sus", "TikTok Moron", "Alotta Fagina", "Joe"]
@@ -70,8 +77,8 @@ def setup(client) -> commands.Cog:
         color = "#FF0000"
       )
       return await ctx.send(content="[]()", embed=embed)
-
-  @eco.command(description="Go to work u bum **requires Resume**")
+  
+  @commands.command(description="Go to work u bum **requires Resume**")
   async def work(ctx):
     amount = random.randint(500, 1000)
     with open("json/bank.json", "r") as f:
@@ -96,7 +103,7 @@ def setup(client) -> commands.Cog:
         json.dump(data, f, indent=2)
     else:
       return await ctx.send("You need a `resume` to work, your not workin' here bub.")
-  @eco.command(aliases=["lb", "leaderboard", "ranking"])
+  @commands.command(aliases=["lb", "leaderboard", "ranking"])
   async def leaderboard(ctx):
     with open("json/bank.json", "r") as f:
       data = json.load(f)
@@ -107,24 +114,24 @@ def setup(client) -> commands.Cog:
     em.sort(reverse=True)
     print(em)
     await ctx.send("this is coming soon i have no idea how to make this work :) :boohoo:")
-
-  @eco.command(aliases=["apply", "getjob", "joblist", "gj", "job", "workas", "howjob"])
+  
+  @commands.command(aliases=["apply", "getjob", "joblist", "gj", "job", "workas", "howjob"])
   async def job(ctx, job=None):
     if job is None:
       embed = voltage.SendableEmbed(
         title = ctx.author.display_name,
         icon_url = ctx.author.display_avatar.url,
         description="""
-**Available Jobs:**
-
-> Teacher
-> Twitch Streamer
-> Youtuber
-> Revolt Mod
-> Developer
-> Porn Star
+  **Available Jobs:**
+  
+  > Teacher
+  > Twitch Streamer
+  > Youtuber
+  > Revolt Mod
+  > Developer
+  > Porn Star
         
-"""
+  """
       )
       return await ctx.send(content="[]()", embed=embed)
     with open("json/bank.json", "r") as f:
@@ -147,19 +154,19 @@ def setup(client) -> commands.Cog:
     else:
       return await ctx.send("You already have a job!")
   
-  @eco.command(aliases=["shop", "buy"])
+  @commands.command(aliases=["shop", "buy"])
   async def shop(ctx, item=None):
     if item is None:
       embed = voltage.SendableEmbed(
         title = ctx.author.display_name,
         icon_url = ctx.author.display_avatar.url,
         description="""
-**Available items for sale:**
+  **Available items for sale:**
   
-Playboy Magazine - `1000`
-Resume - `250`
+  Playboy Magazine - `1000`
+  Resume - `250`
         
-""")
+  """)
       return await ctx.send(content="[]()", embed=embed)
     else:
       with open("json/bank.json", "r") as f:
@@ -187,4 +194,5 @@ Resume - `250`
             json.dump(data, f, indent=2)
           return await ctx.send("You bought a `Playboy Magazine` for `1000` coins!")
     
-  return eco
+def setup(client) -> commands.Cog:
+  return economy(client)
