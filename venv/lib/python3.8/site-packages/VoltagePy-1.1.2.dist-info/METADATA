@@ -1,0 +1,39 @@
+Metadata-Version: 2.1
+Name: VoltagePy
+Version: 1.1.2
+Summary: UNKNOWN
+Home-page: https://github.com/Heroadn/VoltagePy
+Author: Heroadn H.Kaiser
+Author-email: benbenjamin554@gmail.com
+License: License :: OSI Approved :: MIT License
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+Requires-Dist: selenium
+Requires-Dist: urllib3
+
+# VoltagePy
+Simple tool for easy integration for scrappers
+
+<h1>Setup</h1>
+<pre><code>pip install VoltagePy</pre></code>
+after that you are ready, just download a drive for the browser 
+like https://sites.google.com/a/chromium.org/chromedriver/downloads 
+for chrome ones
+
+<h1>Exemple of usage</h1>
+<pre><code>
+    import VoltagePy
+
+    VoltagePy.setup('webdrivers/Chrome/76/linux_76')
+    VoltagePy.open("https://www.duckduckgo.com")
+    print(VoltagePy.pageHtml())
+    VoltagePy.quit()
+</code></pre>
+
+<h4>Next</h4>
+identify the user browser and os, downloading the drives, 
+so the user just need to install the lib, and run.
+<h4>caution high voltage.</h4>
+

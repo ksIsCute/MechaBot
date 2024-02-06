@@ -38,7 +38,7 @@ class MyHelpCommand(commands.HelpCommand):
         return await ctx.reply(f"[]({ctx.author.id})", embed=embed)
 
 
-bot = commands.CommandsClient(prefix=[get_prefix, "m!"], help_command=MyHelpCommand)
+bot = commands.CommandsClient(prefix=get_prefix)
 
 async def status():
     for i in range(1, 10000):
@@ -58,22 +58,21 @@ async def status():
         await asyncio.sleep(5)
 
 
-@bot.listen("message")
+"""@bot.listen("message")
 async def on_message(message):
+    print(message.content)
+    print(message.server.name)
     with open("prefixes.json", "r") as g:
-        prefixes = json.load(g)
+      prefixes = json.load(g)
     if message.server.id not in prefixes:
         with open("prefixes.json", "w") as g:
             prefixes[message.server.id] = "m!"
             json.dump(prefixes, g, indent=2)
     with open("json/users.json", "r") as f:
         data = json.load(f)
-        await bot.handle_commands(message)
     if message.author.id in data:
-      await bot.handle_commands(message)
       pass
     elif message.server.id in prefixes:
-      await bot.handle_commands(message)
       pass
     else:
         if message.author.id not in data:
@@ -90,31 +89,26 @@ async def on_message(message):
     with open("prefixes.json", "r") as f:
         prefixes = json.load(f)
         prefix = prefixes.get(str(message.server.id))
-    if message.content == "<@01FZB4GBHDVYY6KT8JH4RBX4KR>":
-        await message.reply(
-            f"Pong! My prefix for this server is `{prefix}`"
-        )
-        await bot.handle_commands(message)
+    if "<@01FZB4GBHDVYY6KT8JH4RBX4KR>" in message.content:
+      await message.reply(f"Pong! My prefix for this server is `{prefix}`")
     elif message.content.startswith(prefix) is True:
         if message.author.bot is False:
-          await bot.handle_commands(message)
           pass
         else:
-            with open("json/users.json", "r") as f:
-              data = json.load(f)
-            if message.author.id in data:
-                with open("json/users.json", "w") as f:
-                    data[message.author.id] = {
-                        "username": message.author.name,
-                        "id": message.author.id,
-                        "bio": "User has no bio set!",
-                        "beta": "False",
-                        "ff": "False",
-                        "notifications": [],
-                    }
-                json.dump(data, f, indent=2)
-            return await bot.handle_commands(message)
-    await bot.handle_commands(message)
+          with open("json/users.json", "r") as f:
+            data = json.load(f)
+          if message.author.id in data:
+            with open("json/users.json", "w") as f:
+              data[message.author.id] = {
+                "username": message.author.name,
+                "id": message.author.id,
+                "bio": "User has no bio set!",
+                "beta": "False",
+                "ff": "False",
+                "notifications": [],
+              }
+            json.dump(data, f, indent=2)"""
+    
 
 
 @bot.command()
@@ -124,7 +118,7 @@ async def reload(ctx):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 try:
-                    bot.reload_extension(f"cogs.{filename[:-3]}")
+                    bot.add_extension(f"cogs.{filename[:-3]}")
                     print(f"Just reloaded {filename}")
                     await ctx.send(f"Reloaded {filename}")
                 except Exception as e:
@@ -159,15 +153,8 @@ async def member_join(member):
 
 @bot.listen("ready")
 async def on_ready():
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            try:
-                bot.add_extension(f"cogs.{filename[:-3]}")
-                print(f"Just loaded {filename}")
-            except Exception as e:
-                print(e)
-    await status()
-
+  print("online")
+  await status()
 
 @bot.error("message")
 async def on_message_error(error: Exception, message):
