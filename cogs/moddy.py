@@ -6,7 +6,7 @@ import datetime
 from datetime import timedelta
 from voltage.ext import commands
 
-class mod(commands.Cog):
+class mod(commands.SubclassedCog):
 
     def __init__(self, client):
       self.client = client
@@ -25,7 +25,7 @@ class mod(commands.Cog):
 
     @commands.command(
         description="Set a custom prefix for this server!",
-        aliases=["setprefix", "prefix", "serverprefix", "p", "sp"],
+        aliases=["setprefix", "prefix", "serverprefix", "p"],
     )
     async def sp(self, ctx, prefix):
       with open("prefixes.json", "r") as f:
@@ -42,7 +42,7 @@ class mod(commands.Cog):
 
     @commands.command(description="Ban a user from your server!")
     async def ban(self, ctx, member: voltage.Member):
-        if ctx.author.roles[0] > len(member.roles):
+        if ctx.author.roles[0] > member.roles[0]:
             return await ctx.send(
                 "That user is above your top role! I cannot ban them!"
             )
@@ -54,7 +54,7 @@ class mod(commands.Cog):
             return await ctx.send("You want to ban me?! How dare you :boohoo:")
         elif member.permissions.ban_members:
             return await ctx.send(
-                "This user is an administrator! I cannot ban them! Please remove their administrative permissions before continuing."
+                "This user is an administrator! I cannot ban them! Please remove their administrative permissions before continuing.."
             )
         try:
             await member.ban()
@@ -75,7 +75,7 @@ class mod(commands.Cog):
             return await ctx.send(
                 "That user is above your top role! I cannot kick them!"
             )
-        elif member.roles[0] < client.roles[0]:
+        elif member.roles[0] < self.client.roles[0]:
             return await ctx.send(
                 "I couldnt kick the member because I do not have a high enough role to do this!"
             )

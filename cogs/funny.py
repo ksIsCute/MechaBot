@@ -5,7 +5,7 @@ def setup(client) -> commands.Cog:
   fun = commands.Cog("Fun", "Have some fun and play around with Mecha's commands!")
   @fun.command(
       description="Give someone a pat!",
-      aliases=["givepat", "patmember", "patuser", "userpat", "pat"],
+      aliases=["givepat", "patmember", "patuser", "userpat"],
   )
   async def pat(ctx, member: voltage.Member):
       if member.id == ctx.author.id:
@@ -25,7 +25,7 @@ def setup(client) -> commands.Cog:
   # https://some-random-api.ml/animu/pat
   @fun.command(
       description="Give someone a hug!",
-      aliases=["givehug", "hugmember", "huguser", "userhug", "hug"],
+      aliases=["givehug", "hugmember", "huguser", "userhug"],
   )
   async def hug(ctx, member: voltage.Member):
       if member.id == ctx.author.id:
@@ -58,7 +58,7 @@ def setup(client) -> commands.Cog:
 
   @fun.command(
       description="Are you gay or no?",
-      aliases=["howgay", "gay", "gayrate", "amigay", "gaypercent", "gayamount"],
+      aliases=["howgay", "gay", "amigay", "gaypercent", "gayamount"],
   )
   async def gayrate(ctx, member: voltage.Member = None):
       if member is None:
@@ -95,7 +95,7 @@ def setup(client) -> commands.Cog:
 
   @fun.command(
       description="How long is your pp?",
-      aliases=["pp", "ppsize", "getpp", "whatsmypp", "penismeter", "ppmeter"],
+      aliases=["pp", "ppsize", "getpp", "whatsmypp", "penismeter"],
   )
   async def ppmeter(ctx):
       ppmeter = [
@@ -111,6 +111,7 @@ def setup(client) -> commands.Cog:
           "=============================",
           "-",
           "`Error: pp too small`",
+          "System Overload: pp too big.."
       ]
       embed = voltage.SendableEmbed(
           title="Your PP:",
@@ -128,8 +129,7 @@ def setup(client) -> commands.Cog:
           "dogpics",
           "dogpictures",
           "getdog",
-          "getdogs",
-          "dog",
+          "getdogs"
       ],
   )
   async def dog(ctx):
@@ -149,7 +149,7 @@ def setup(client) -> commands.Cog:
 
   @fun.command(
       description="Get some cute cat pics for your collection!",
-      aliases=["kitties", "kitty", "cats", "catpic", "kittypic", "catpicture", "cat"],
+      aliases=["kitties", "kitty", "cats", "catpic", "kittypic", "catpicture"],
   )
   async def cat(ctx):
       async with aiohttp.ClientSession() as session:
@@ -168,7 +168,7 @@ def setup(client) -> commands.Cog:
 
   @fun.command(
       description="Get some cute fox pics!",
-      aliases=["foxies", "foxs", "foxes", "foxypic", "foxpic", "foxpicture", "fox"],
+      aliases=["foxies", "foxs", "foxes", "foxypic", "foxpic", "foxpicture"],
   )
   async def fox(ctx):
       async with aiohttp.ClientSession() as session:
@@ -187,7 +187,7 @@ def setup(client) -> commands.Cog:
 
   @fun.command(
       description="Get some rockin' bird pics :sunglasses:",
-      aliases=["birb", "berd", "birbpic", "birdpic", "berdpic", "bird"],
+      aliases=["birb", "berd", "birbpic", "birdpic", "berdpic"],
   )
   async def bird(ctx):
       async with aiohttp.ClientSession() as session:
@@ -206,7 +206,7 @@ def setup(client) -> commands.Cog:
 
   @fun.command(
       description="Get some randomly generated animal pics!",
-      aliases=["animals", "animal", "animalpic", "animalz", "petpic"],
+      aliases=["animals", "animalpic", "animalz", "petpic"],
   )
   async def animal(ctx):
       animals = ["koala", "raccoon", "kangaroo", "panda"]

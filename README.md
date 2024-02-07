@@ -1,6 +1,5 @@
 # Mecha's Revolt Bot!
 
-
 <sup id="cogs">[Current Cogs](#cog)</sup>
 <br>
 <sup id="ver">[Version Support](#vers)</sup>
@@ -16,12 +15,14 @@
 - Fun
 
 # <b id="vers">Supported Python Versions: </b>[↩](#ver)
-| Status | Version |
-| ----------- | ----------- |
-|❌| 2.7 |
-|✅|3.0 |
-|✅|Above 3.0|
-| ✅ | Latest |
+
+| Status | Version   |
+| ------ | --------- |
+| ❌     | 2.7       |
+| ✅     | 3.0       |
+| ✅     | Above 3.0 |
+| ✅     | Latest    |
+
 If your version isnt supported, you can upgrade/downgrade [here](https://python.org/download)
 
 ## <b id="inst">Setup and Install</b>[↩](#ins)
@@ -38,4 +39,5 @@ If your version isnt supported, you can upgrade/downgrade [here](https://python.
 - Restart the bot
 
 # [Created by ks and css.](https://mechabot.tk/)
+
 ![banner](https://i.imgur.com/G4k13Nm.png)

@@ -8,7 +8,7 @@ from mcstatus import JavaServer
 starttime = time.time()
 version = "1.1.2"
 
-class utility(commands.Cog):
+class utility(commands.SubclassedCog):
 
     def __init__(self, client):
         self.client = client
@@ -67,7 +67,7 @@ class utility(commands.Cog):
             await ctx.send(content="[]()", embed=embed)
 
     @commands.command(
-        description="Removes some of the nsfw commands and makes Mecha family friendly PG clean"
+        description="Removes some of the nsfw commands and makes Mecha family friendly PG clean for everyone!"
     )
     async def ff(self, ctx, arg):
         if arg.lower() in ["yes", "on", "activated", "y", "online", "true"]:
@@ -99,21 +99,26 @@ class utility(commands.Cog):
             )
             await ctx.send(content="[]()", embed=embed)
 
-    @commands.command(description="Get a random color!", aliases=["colour", "color"])
+    @commands.command(description="Get a random color! (Also supports Canadian pronounciation!)", aliases=["colour"])
     async def color(self, ctx):
         chosen = "#%06x" % random.randint(0, 0xFFFFFF)
         print(chosen)
-        await ctx.send(f"[](https://some-random-api.ml/canvas/colorviewer?hex={chosen})")
+        embed = voltage.SendableEmbed (
+          media = f"https://some-random-api.ml/canvas/colorviewer?hex={chosen}",
+          color = chosen,
+        )
+        await ctx.send(f"[]()", embed=embed)
         
-    @commands.command(description="Get the color of a hex code as an image!", aliases=["view", "viewcolor", "gc", "getcolour", "getcolor", "viewcolour"])
+    @commands.command(description="Get the color of a hex code as an image!", aliases=["view", "viewcolor", "getcolour", "getcolor", "viewcolour"])
     async def gc(self, ctx, hex):
         embed = voltage.SendableEmbed(
             title="Got it!",
             description=f"This is the color for your hex code: `{hex}`",
+            media = "https://some-random-api.ml/canvas/colorviewer?hex={hex}",
             color="#516BF2",
         )
         await ctx.send(
-            content=f"[](https://some-random-api.ml/canvas/colorviewer?hex={hex})",
+            content=f"[]()",
             embed=embed,
         )
 
@@ -235,7 +240,7 @@ class utility(commands.Cog):
             return await ctx.send("Bot profiles coming soon")
 
     @commands.command(
-        aliases=["setbio", "sb", "bio", "changebio", "createbio", "cb", "sbio"]
+        aliases=["setbio", "sb", "changebio", "createbio", "cb", "sbio"]
     )
     async def bio(self, ctx, *, bio: str):
         if len(bio) > 250:
@@ -254,7 +259,7 @@ class utility(commands.Cog):
             f"Set your bio! Check it using `{prefix.get(str(ctx.server.id))}profile`!"
         )
 
-    @commands.command(description="Check out a users profile or yours!")
+    @commands.command(description="Check out a users profile or yours!", aliases=["pr", "userprofile"])
     async def profile(self, ctx, user: voltage.User = None):
         if user is None:
             user = ctx.author
@@ -328,7 +333,7 @@ class utility(commands.Cog):
                 "This command is for **beta testers** only! Use the `beta` command to register and come back!"
             )
 
-    @commands.command(description="Check your notifications", aliases=["inbox", "notifications", "mynotifs", "notifs", "myinbox"])
+    @commands.command(description="Check your notifications", aliases=["notifications", "mynotifs", "notifs", "myinbox"])
     async def inbox(self, ctx):
         with open("json/users.json", "r") as f:
             data = json.load(f)
@@ -360,4 +365,4 @@ class utility(commands.Cog):
             json.dump(data, f, indent=2)
           
 def setup(client) -> commands.Cog:
-    return utility(client)
+  return utility(client)

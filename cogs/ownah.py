@@ -2,7 +2,7 @@ import voltage, asyncio, json, datetime, time
 from voltage.ext import commands
 
 
-class owner(commands.Cog):
+class owner(commands.SubclassedCog):
 
     def __init__(self, client):
         self.client = client
